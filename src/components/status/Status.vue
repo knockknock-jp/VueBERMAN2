@@ -33,7 +33,7 @@
 </template>
 
 <script>
-    import { LOGOUT, SEND_COMMENT } from '../../mutation-types';
+    import {LOGOUT, PLAY_GAME, PAUSE_GAME, SEND_COMMENT} from '../../mutation-types';
     import CharacterIcon from '../character-icon/CharacterIcon'
 
     export default {
@@ -57,9 +57,11 @@
                     this.$store.commit(SEND_COMMENT, {
                         message: this.inputMessage
                     });
+                    this.$store.commit(PLAY_GAME);
                 } else {
                     this.isEditing = true;
                     this.inputMessage = this.comment;
+                    this.$store.commit(PAUSE_GAME);
                 }
             },
         },

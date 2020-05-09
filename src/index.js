@@ -12,6 +12,8 @@ import {
     SEND_COMMENT,
     SEND_USER_STATE,
     SEND_MAP_STATE,
+    PLAY_GAME,
+    PAUSE_GAME,
 } from './mutation-types';
 
 Vue.config.productionTip = false;
@@ -41,6 +43,8 @@ Vue.use(Vuex);
 
     const store = new Vuex.Store({
         state: {
+            login: false,
+            playGame: false, // プレーヤー操作可能
             uid: null,
             users: [],
             map: null,
@@ -62,6 +66,7 @@ Vue.use(Vuex);
             // ログイン
             [LOGIN] (state, payload) {
                 // console.log(LOGIN, state, payload);
+                state.login = true;
                 const uid = Math.random().toString(36).slice(-8);
                 state.uid = uid;
                 // ユーザー追加
@@ -89,6 +94,7 @@ Vue.use(Vuex);
             // ログアウト
             [LOGOUT] (state, payload) {
                 // console.log(LOGOUT, state, payload);
+                state.login = false;
                 // ユーザー削除
                 socket.emit('removeUser', state.uid);
                 state.uid = null;
@@ -107,6 +113,7 @@ Vue.use(Vuex);
 
             // ユーザーの状態送信
             [SEND_USER_STATE] (state, payload) {
+                // console.log(SEND_USER_STATE, state, payload);
                 // ユーザーの状態送信
                 socket.emit('sendUserState', {
                     uid: state.uid,
@@ -116,6 +123,7 @@ Vue.use(Vuex);
 
             // マップの状態送信
             [SEND_MAP_STATE] (state, payload) {
+                // console.log(SEND_MAP_STATE, state, payload);
                 // マップの状態送信
                 socket.emit('sendMapState', {
                     y: payload.y,
@@ -123,6 +131,18 @@ Vue.use(Vuex);
                     type: payload.type,
                     uid: payload.uid,
                 })
+            },
+
+            // ゲーム開始
+            [PLAY_GAME] (state, payload) {
+                // console.log(PLAY_GAME, state, payload);
+                state.playGame = true;
+            },
+
+            // ゲーム停止
+            [PAUSE_GAME] (state, payload) {
+                // console.log(PAUSE_GAME, state, payload);
+                state.playGame = false;
             },
 
         }

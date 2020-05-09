@@ -53,9 +53,9 @@
 
             // PIXI.jsアプリケーション初期化
             this.app = new PIXI.Application({
-                width: GAME_MAP_ROW * CELL_SIZE,
-                height: (GAME_MAP_COL * CELL_SIZE) + (CELL_SIZE * 0.25),
-                backgroundColor: 0x62972c,
+                width: GAME_MAP_COL * CELL_SIZE,
+                height: (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25),
+                backgroundColor: 0x000000,
                 resolution: window.devicePixelRatio || 1,
                 autoResize: true,
             });
@@ -72,12 +72,18 @@
             this.mapSprite = null;
             this.usersSprite = [];
 
-            this.fieldContainer = new PIXI.Container();
-            this.fieldContainer.sortableChildren = true;
-            this.app.stage.addChild(this.fieldContainer);
+            // ゲームコンテナ作成
+            this.gameContainer = new PIXI.Container();
+            this.app.stage.addChild(this.gameContainer);
 
-            // フィールド読み込み
-            this.loadField().then(()=> {
+            // グランド作成
+            this.createGround();
+
+            // マップ読み込み
+            this.mapContainer = new PIXI.Container();
+            this.mapContainer.sortableChildren = true;
+            this.app.stage.addChild(this.mapContainer);
+            this.loadMap().then(()=> {
                 // ゲームマップ描画
                 this.setMap(this.map);
             });
@@ -85,8 +91,30 @@
         },
         methods: {
 
-            // フィールド読み込み
-            loadField: function() {
+            // グランド作成
+            createGround: function() {
+                const container = new PIXI.Container();
+                let i, max;
+                for (i = 0, max = GAME_MAP_ROW; i < max; i = i + 1) {
+                    let j, max2;
+                    for (j = 0, max2 = GAME_MAP_COL; j < max2; j = j + 1) {
+                        const graphics = new PIXI.Graphics();
+                        if (j % 2 && i % 2) {
+                            graphics.beginFill(0x62972c);
+                        } else {
+                            graphics.beginFill(0x5d8f2b);
+                        }
+                        graphics.drawRect(0, 0, CELL_SIZE, CELL_SIZE + (CELL_SIZE * 0.25));
+                        graphics.endFill();
+                        graphics.position.set(j * CELL_SIZE, (i * CELL_SIZE) + (CELL_SIZE * 0.25));
+                        container.addChild(graphics);
+                    }
+                }
+                this.gameContainer.addChild(container);
+            },
+
+            // マップ読み込み
+            loadMap: function() {
                 this.mapSprite = [];
                 return new Promise((resolve)=> {
                     const loader = new PIXI.Loader();
@@ -140,8 +168,8 @@
                                 animatedSprite.position.set(j * CELL_SIZE, i * CELL_SIZE);
                                 animatedSprite.width = CELL_SIZE;
                                 animatedSprite.height = CELL_SIZE + (CELL_SIZE * 0.25);
-                                animatedSprite.zIndex = i * CELL_SIZE;
-                                this.fieldContainer.addChild(animatedSprite);
+                                // animatedSprite.zIndex = i * CELL_SIZE;
+                                this.mapContainer.addChild(animatedSprite);
                                 // this.app.stage.addChild(animatedSprite);
                                 animatedSprite.gotoAndStop(1);
                                 arr.push(animatedSprite);
@@ -188,7 +216,8 @@
                         }
                         textures.push(PIXI.Texture.from(`player-death`));
                         const sprite = new PIXI.AnimatedSprite(textures);
-                        sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.3);
+                        sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.5);
+                        // sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.3);
                         sprite.width = CELL_SIZE * 1.5;
                         sprite.height = CELL_SIZE * 1.5;
                         sprite.gotoAndStop(0);
@@ -206,12 +235,13 @@
                             wordWrapWidth: CELL_SIZE * 2,
                         }));
                         text.x = (CELL_SIZE / 2) - (text.width / 2);
-                        text.y = -(CELL_SIZE / 2) - text.height + 5;
+                        text.y = CELL_SIZE;
+                        // text.y = -(CELL_SIZE / 2) - text.height + 5;
                         // コンテナ
                         const container = new PIXI.Container();
                         container.addChild(sprite);
                         container.addChild(text);
-                        this.fieldContainer.addChild(container);
+                        this.mapContainer.addChild(container);
                         //
                         this.usersSprite.push({
                             uid: uid,
@@ -416,14 +446,27 @@
                                 }));
                                 text.x = 5;
                                 text.y = 5;
+                                //
                                 const graphics = new PIXI.Graphics();
-                                graphics.beginFill(0xffffff, 0.9);
+                                graphics.beginFill(0xffffff, 0.8);
                                 graphics.drawRoundedRect(0, 0, CELL_SIZE * 3, text.height + 10, 15);
                                 graphics.endFill();
-                                commentContainer.x = (CELL_SIZE / 2) - (((CELL_SIZE * 3) - 10) / 2);
-                                commentContainer.y = -(text.height + 50);
                                 //
+                                const graphics2 = new PIXI.Graphics();
+                                graphics2.beginFill(0xffffff, 0.8);
+                                const xCenter = ((CELL_SIZE * 3) - 10) / 2;
+                                const yTop = text.height + 10;
+                                graphics2.moveTo(xCenter + 5, yTop);
+                                graphics2.lineTo(xCenter, yTop + 10);
+                                graphics2.lineTo(xCenter - 5, yTop);
+                                graphics2.lineTo(xCenter + 5, yTop);
+                                graphics2.closePath();
+                                graphics2.endFill();
+                                //
+                                commentContainer.x = (CELL_SIZE / 2) - (((CELL_SIZE * 3) - 10) / 2);
+                                commentContainer.y = -(text.height + 40);
                                 commentContainer.addChild(graphics);
+                                commentContainer.addChild(graphics2);
                                 commentContainer.addChild(text);
                                 container.addChild(commentContainer);
                                 //
@@ -447,10 +490,18 @@
                 if (!sprite || !container) return;
                 //
                 container.position.set(state.displayPositionX * CELL_SIZE, state.displayPositionY * CELL_SIZE);
-                container.zIndex = Math.floor(state.displayPositionY * CELL_SIZE);
+                container.zIndex = state.currentPositionY;
+                // container.zIndex = Math.floor(state.displayPositionY * CELL_SIZE);
+                // 死亡状態
                 if (state.death) {
                     sprite.gotoAndStop(16);
                     return;
+                }
+                // 無敵状態
+                if (state.invincibly) {
+                    sprite.alpha = 0.5;
+                } else {
+                    sprite.alpha = 1;
                 }
                 switch (state.lastMovingDirection) {
                     case DIRECTION_UP:
@@ -486,6 +537,9 @@
 
         },
         computed: {
+            invincibly: function() {
+                return this.$store.state.invincibly;
+            },
             map: function() {
                 return this.$store.state.map;
             },
@@ -509,7 +563,7 @@
                         this.setPlayer(addedUser.uid, addedUser.state, addedUser.comments[0]);
                     });
                 } else if (val.length < oldVal.length) {
-                    // console.log('user削除');
+                    // console.log('user削除', val);
                     // 不用なSpriteの削除
                     let i, max;
                     for (i = 0, max = this.usersSprite.length; i < max; i = i + 1) {
@@ -522,7 +576,7 @@
                             }
                         }
                         if (!flg) {
-                            this.app.stage.removeChild(this.usersSprite[i].container);
+                            this.mapContainer.removeChild(this.usersSprite[i].container);
                         }
                     }
                     for (i = 0, max = val.length; i < max; i = i + 1) {

@@ -77,8 +77,8 @@ const CELL_TYPE_ITEM_EXPLOSION_POWER = 20; // アイテム（火力）
 const CELL_TYPE_ITEM_MOVE_SPEED = 21; // アイテム（移動速度）
 const CELL_TYPE_ITEM_BOMB_POSSESSIONS = 22; // アイテム（爆弾所有数）
 // 加算ポイント
-const ADD_POINT_ITEM = 100;
-const ADD_POINT_BLOCK = 10;
+const ADD_POINT_ITEM = 10;
+const ADD_POINT_BLOCK = 1;
 //
 const ITEM_TYPES = [
     CELL_TYPE_ITEM_EXPLOSION_POWER,
@@ -86,7 +86,7 @@ const ITEM_TYPES = [
     CELL_TYPE_ITEM_BOMB_POSSESSIONS,
 ];
 const ITEM_APPEARANCE_PROBABILITY = 0.3; // アイテム出現率
-const GAME_MAP_ROW = 31; // 行
+const GAME_MAP_ROW = 21; // 行
 const GAME_MAP_COL = 31; // 列
 
 // ユーザー情報
@@ -103,14 +103,24 @@ let map = ((row, col)=> {
             if (i === 0 || i === row - 1 || j === 0 || j === col - 1 || ((i % 2) === 0 && (j % 2) === 0)) {
                 arr2.push(0);
             } else {
+                // 左上
                 if (i === 1 && (j === 1 || j === 2) || (i === 2 && j === 1)) {
-                    // スタート地点
                     arr2.push(1);
-                } else if (i === row - 2 && j === col - 2) {
-                    // ゴール地点
+                }
+                // 左下
+                else if ((i === row - 2 && j === 1) || (i === row - 2 && j === 2) || (i === row - 3 && j === 1)) {
                     arr2.push(1);
-                } else {
-                    if (Math.random() <= 0.1) {
+                }
+                // 右上
+                else if ((i === 1 && j === col - 2) || (i === 1 && j === col - 3) || (i === 2 && j === col - 2)) {
+                    arr2.push(1);
+                }
+                // 右下
+                else if ((i === row - 2 && j === col - 2) || (i === row - 2 && j === col - 3) || (i === row - 3 && j === col - 2)) {
+                    arr2.push(1);
+                }
+                else {
+                    if (Math.random() <= 0.2) {
                         // ブロック
                         arr2.push(2);
                     } else {
@@ -172,10 +182,10 @@ setInterval(()=> {
             // 爆発伝播（一回だけ実行）
             else if (BOMB_COUNT_PROPAGATION <= bombsMap[i][j].count) {
                 bombsMap[i][j].count = BOMB_COUNT_EXPLOSION;
-                // 爆発伝播
-                setExplosion(i, j, bombsMap[i][j].power, bombsMap[i][j].uid);
                 // セルの種類設定（爆弾爆発）
                 map[i][j] = CELL_TYPE_EXPLOSION_TBLR;
+                // 爆発伝播
+                setExplosion(i, j, bombsMap[i][j].power, bombsMap[i][j].uid);
             }
 
             // 爆弾スタンバイ

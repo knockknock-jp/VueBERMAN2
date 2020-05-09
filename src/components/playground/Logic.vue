@@ -31,8 +31,21 @@
         DIRECTION_RIGHT,
         DIRECTION_DOWN,
         DIRECTION_LEFT,
+        ITEM_BOMB_POSSESSIONS_STEP_UP_POINT,
+        ITEM_EXPLOSION_POWER_STEP_UP_POINT,
+        ITEM_MOVE_SPEED_STEP_UP_POINT,
+        MAX_MOVE_SPEED,
+        PLAYER_INITIAL_MOVE_SPEED,
+        PLAYER_INITIAL_EXPLOSION_POWER,
+        PLAYER_INITIAL_BOMB_POSSESSIONS,
+        PLAYER_INITIAL_INVINCIBLY_TIME,
+        GAME_MAP_COL,
+        GAME_MAP_ROW,
     } from '../../const'
-    import {SEND_USER_STATE, SEND_MAP_STATE} from "../../mutation-types";
+    import {
+        SEND_USER_STATE,
+        SEND_MAP_STATE,
+    } from "../../mutation-types";
 
     export default {
         name: 'Logic',
@@ -45,16 +58,26 @@
                     currentPositionX: 1, // 現在位置
                     movingDirectionArr: [],
                     lastMovingDirection: 'down',
-                    moveSpeed: 0.2, // 移動速度
-                    explosionPower: 3, // 爆発威力
-                    bombPossessions: 3, // 爆弾所有数
+                    moveSpeed: PLAYER_INITIAL_MOVE_SPEED, // 移動速度
+                    explosionPower: PLAYER_INITIAL_EXPLOSION_POWER, // 爆発威力
+                    bombPossessions: PLAYER_INITIAL_BOMB_POSSESSIONS, // 爆弾所有数
                     death: false,
-                }
+                    invincibly: false, // 無敵
+                },
             }
         },
         created() {
-
+            // this._uid = this.uid;
             setInterval(()=> {
+                // if (this._uid !== this.uid) {
+                //     this._uid = this.uid;
+                //     if (this.uid) {
+                //         // console.log('ログイン');
+                //         this.initializedPlayer();
+                //     } else {
+                //         // console.log('ログアウト');
+                //     }
+                // }
                 if (!this.map || !this.uid) return;
                 // プレーヤー移動
                 this.movePlayer();
@@ -64,7 +87,7 @@
         beforeMount() {
             // KEY UPイベント
             document.addEventListener('keydown', (event)=> {
-                if (!this.map || !this.uid) return;
+                if (!this.playGame) return;
                 const directionKeyDownHandler = (direction)=> {
                     if (0 <= this.playerState.movingDirectionArr.join(',').indexOf(direction)) return;
                     this.playerState.movingDirectionArr = this.playerState.movingDirectionArr.filter((item)=> {
@@ -102,7 +125,7 @@
             });
             // KEY DOWNイベント
             document.addEventListener('keyup', (event)=> {
-                if (!this.map || !this.uid) return;
+                if (!this.playGame) return;
                 const directionKeyUpHandler = (direction)=> {
                     this.playerState.movingDirectionArr = this.playerState.movingDirectionArr.filter((item)=> {
                         return item !== direction;
@@ -155,12 +178,15 @@
                 const currentPositionY = Math.round(this.playerState.displayPositionY);
                 const currentCellType = this.getCellType(currentPositionY, currentPositionX);
 
-                // // 爆発によりプレーヤー死亡
-                // if (this.getIsExplosionCell(currentCellType)) {
-                //     // プレーヤー死亡
-                //     this.deathPlayer();
-                //     return;
-                // }
+                // 爆発によりプレーヤー死亡
+                if (this.getIsExplosionCell(currentCellType)) {
+                    // 無敵状態
+                    if (!this.playerState.invincibly) {
+                        // プレーヤー死亡
+                        this.deathPlayer();
+                        return;
+                    }
+                }
 
                 // // 敵に接触によりプレーヤー死亡
                 // let i, max;
@@ -275,64 +301,83 @@
                     //     }
                     // }
 
-                    // // アイテム取得
-                    // if (currentCellType === CELL_TYPE_ITEM_BOMB_POSSESSIONS) {
-                    //     // 爆弾所有数増加
-                    //     this.playerState.bombPossessions += ITEM_BOMB_POSSESSIONS_STEP_UP_POINT;
-                    //     // セルの種類設定（通路）
-                    //     this.setCellType(currentPositionY, currentPositionX, CELL_TYPE_FREE);
-                    // } else if (currentCellType === CELL_TYPE_ITEM_MOVE_SPEED) {
-                    //     // 移動速度アップ
-                    //     const speed = this.playerState.moveSpeed + ITEM_MOVE_SPEED_STEP_UP_POINT;
-                    //     if (speed < MAX_MOVE_SPEED < speed) {
-                    //         this.playerState.moveSpeed = MAX_MOVE_SPEED;
-                    //     } else {
-                    //         this.playerState.moveSpeed = speed;
-                    //     }
-                    //     // セルの種類設定（通路）
-                    //     this.setCellType(currentPositionY, currentPositionX, CELL_TYPE_FREE);
-                    // } else if (currentCellType === CELL_TYPE_ITEM_EXPLOSION_POWER) {
-                    //     // 火力強化
-                    //     this.playerState.explosionPower += ITEM_EXPLOSION_POWER_STEP_UP_POINT;
-                    //     // セルの種類設定（通路）
-                    //     this.setCellType(currentPositionY, currentPositionX, CELL_TYPE_FREE);
-                    // }
+                    // アイテム取得
+                    if (currentCellType === CELL_TYPE_ITEM_BOMB_POSSESSIONS) {
+                        // console.log('爆弾所有数増加');
+                        // 爆弾所有数増加
+                        this.playerState.bombPossessions += ITEM_BOMB_POSSESSIONS_STEP_UP_POINT;
+                        // セルの種類設定（通路）
+                        this.setCellType(currentPositionY, currentPositionX, CELL_TYPE_FREE);
+                    } else if (currentCellType === CELL_TYPE_ITEM_MOVE_SPEED) {
+                        // console.log('移動速度アップ');
+                        // 移動速度アップ
+                        const speed = this.playerState.moveSpeed + ITEM_MOVE_SPEED_STEP_UP_POINT;
+                        if (MAX_MOVE_SPEED < speed) {
+                            this.playerState.moveSpeed = MAX_MOVE_SPEED;
+                        } else {
+                            this.playerState.moveSpeed = speed;
+                        }
+                        // セルの種類設定（通路）
+                        this.setCellType(currentPositionY, currentPositionX, CELL_TYPE_FREE);
+                    } else if (currentCellType === CELL_TYPE_ITEM_EXPLOSION_POWER) {
+                        // console.log('火力強化');
+                        // 火力強化
+                        this.playerState.explosionPower += ITEM_EXPLOSION_POWER_STEP_UP_POINT;
+                        // セルの種類設定（通路）
+                        this.setCellType(currentPositionY, currentPositionX, CELL_TYPE_FREE);
+                    }
 
                 }
             },
 
-            // // プレーヤー死亡
-            // deathPlayer: function() {
-            //     this.playerState.death = true;
-            //     // パラメータを初期化して再開
-            //     setTimeout(()=> {
-            //         // 残数確認
-            //         this.left -= 1;
-            //         if (this.left < 0) {
-            //             this.left = 0;
-            //             // ゲームオーバー表示
-            //             this.scene = SCENE_GAME_OVER;
-            //         } else {
-            //             // プレーヤー初期化
-            //             this.initializedPlayer();
-            //         }
-            //     }, 3000);
-            // },
-            //
-            // // プレーヤー初期化
-            // initializedPlayer: function() {
-            //     this.playerState.death = false;
-            //     this.playerState.displayPositionX = 1;
-            //     this.playerState.displayPositionY = 1;
-            //     this.playerState.currentPositionX = 1;
-            //     this.playerState.currentPositionY = 1;
-            //     this.playerState.moveSpeed = PLAYER_INITIAL_MOVE_SPEED;
-            //     this.playerState.explosionPower = PLAYER_INITIAL_EXPLOSION_POWER;
-            //     this.playerState.bombPossessions = PLAYER_INITIAL_BOMB_POSSESSIONS;
-            //     this.playerState.lastMovingDirection = DIRECTION_DOWN;
-            //     this.playerState.movingDirectionArr = [];
-            // },
+            // プレーヤー死亡
+            deathPlayer: function() {
+                this.playerState.death = true;
+                setTimeout(()=> {
+                    // プレーヤー初期化
+                    this.initializedPlayer();
+                }, 3000);
+            },
 
+            // プレーヤー初期化
+            initializedPlayer: function() {
+                this.playerState.death = false;
+
+                // 左
+                if (this.playerState.currentPositionX < GAME_MAP_COL / 2) {
+                    this.playerState.displayPositionX = 1;
+                    this.playerState.currentPositionX = 1;
+                }
+                // 右
+                else {
+                    this.playerState.displayPositionX = GAME_MAP_COL - 2;
+                    this.playerState.currentPositionX = GAME_MAP_COL - 2;
+                }
+                // 上
+                if (this.playerState.currentPositionY < GAME_MAP_ROW / 2) {
+                    this.playerState.displayPositionY = 1;
+                    this.playerState.currentPositionY = 1;
+                }
+                // 下
+                else {
+                    this.playerState.displayPositionY = GAME_MAP_ROW - 2;
+                    this.playerState.currentPositionY = GAME_MAP_ROW - 2;
+                }
+
+                this.playerState.moveSpeed = PLAYER_INITIAL_MOVE_SPEED;
+                this.playerState.explosionPower = PLAYER_INITIAL_EXPLOSION_POWER;
+                this.playerState.bombPossessions = PLAYER_INITIAL_BOMB_POSSESSIONS;
+                this.playerState.lastMovingDirection = DIRECTION_DOWN;
+                this.playerState.movingDirectionArr = [];
+
+                // 無敵設定
+                this.playerState.invincibly = true;
+                setTimeout(()=> {
+                    // 無敵解除
+                    this.playerState.invincibly = false;
+                }, PLAYER_INITIAL_INVINCIBLY_TIME);
+
+            },
 
             // 爆弾設置
             setBomb: function() {
@@ -352,8 +397,11 @@
                 })();
                 // セルの種類設定
                 if (setBombCount < this.playerState.bombPossessions) {
-                    // セルの種類設定
-                    this.setCellType(this.playerState.currentPositionY, this.playerState.currentPositionX, CELL_TYPE_BOMB);
+                    const currentCellType = this.getCellType(this.playerState.currentPositionY, this.playerState.currentPositionX);
+                    if (currentCellType === CELL_TYPE_FREE) {
+                        // セルの種類設定
+                        this.setCellType(this.playerState.currentPositionY, this.playerState.currentPositionX, CELL_TYPE_BOMB);
+                    }
                 }
             },
 
@@ -426,6 +474,12 @@
 
         },
         computed: {
+            login: function() {
+                return this.$store.state.login;
+            },
+            playGame: function() {
+                return this.$store.state.playGame;
+            },
             uid: function() {
                 return this.$store.state.uid;
             },
@@ -437,7 +491,15 @@
             },
         },
         watch: {
-
+            login: function(val) {
+                if (val) {
+                    // console.log('ログイン');
+                    // プレーヤー初期化
+                    this.initializedPlayer();
+                } else {
+                    // console.log('ログアウト');
+                }
+            },
             playerState: {
                 handler: function (val, oldVal) {
                     // ユーザーの状態送信
@@ -447,7 +509,6 @@
                 },
                 deep: true,
             },
-
         },
     }
 </script>

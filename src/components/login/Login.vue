@@ -53,7 +53,7 @@
 </template>
 
 <script>
-    import { LOGIN } from '../../mutation-types';
+    import {LOGIN, PLAY_GAME} from '../../mutation-types';
     import { CHARACTER_TYPES } from '../../const'
     import CharacterIcon from '../character-icon/CharacterIcon'
 
@@ -76,6 +76,9 @@
                     name: this.charaName,
                     type: this.charaType
                 })
+                setTimeout(()=> {
+                    this.$store.commit(PLAY_GAME);
+                }, 100);
             }
         }
     }

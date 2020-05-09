@@ -12,3 +12,7 @@ export const SEND_COMMENT = 'send_comment';
 export const SEND_USER_STATE = 'send_user_state';
 // マップの状態送信
 export const SEND_MAP_STATE = 'send_map_state';
+// ゲーム開始
+export const PLAY_GAME = 'play_game';
+// ゲーム停止
+export const PAUSE_GAME = 'pause_game';
