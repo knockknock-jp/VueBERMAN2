@@ -21,6 +21,20 @@ Vue.use(Vuex);
 
 (()=> {
 
+    // FPS表示
+    const stats = (()=> {
+        const stats = new Stats();
+        stats.showPanel(0);
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.top = '0px';
+        document.body.appendChild(stats.domElement);
+        return stats;
+    })();
+    setInterval(()=> {
+        stats.update();
+    }, 1000 / 60);
+
     const socket = io();
 
     // ユーザー情報

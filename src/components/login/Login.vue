@@ -41,7 +41,7 @@
                     </dl>
                     <dl class="list-dl">
                         <dt>Name</dt>
-                        <dd><input class="common__input-text" type="text" maxlength="20" v-model="charaName" v-bind:class="charaName ? 'focus' : ''" /></dd>
+                        <dd><input class="common__input-text" type="text" maxlength="20" v-model="charaName" v-bind:class="charaName ? 'focus' : ''" ref="inputTextName" /></dd>
                     </dl>
                     <div class="box">
                         <input class="common__input-submit common__input-submit--large" type="submit" value="LOGIN" v-bind:disabled="!charaName || !charaType ? true : false" />
@@ -65,9 +65,13 @@
         data: function () {
             return {
                 charaType: CHARACTER_TYPES[0],
-                charaName: null,
+                charaName: 'test',
+                // charaName: null,
                 charaTypes: CHARACTER_TYPES,
             }
+        },
+        mounted() {
+            this.$refs.inputTextName.focus();
         },
         methods: {
             submit: function() {
@@ -95,14 +99,14 @@
     }
     .container {
         position: absolute;
-        top: 50%;
+        top: calc(50% - 100px);
         left: 50%;
         transform: translate(-50%, -50%);
         box-sizing: border-box;
         padding: 40px;
         width: 100%;
         max-width: 600px;
-        border-radius: 10px;
+        /*border-radius: 10px;*/
         background-color: #000;
     }
     .heading {

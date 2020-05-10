@@ -10,7 +10,7 @@
                 </div>
                 <div class="box-comment">
                     <template v-if="isEditing">
-                        <textarea class="textarea" maxlength="40" cols="20" rows="4" v-model="inputMessage"></textarea>
+                        <textarea class="textarea" maxlength="40" cols="20" rows="3" v-model="inputMessage"></textarea>
                     </template>
                     <template v-else>
                         <template v-if="comment">
@@ -109,17 +109,22 @@
 
 <style scoped lang="scss">
     .container {
-        width: 200px;
-        height: 200px;
-        border-radius: 10px;
-        background-color: rgba(0, 0, 0, 0.7);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        border-radius: 5px;
+        background-color: #333;
     }
     .box-lank {
         position: absolute;
-        top: -30px;
-        left: 0;
-        width: 100px;
-        font-size: 25px;
+        top: 5px;
+        left: 10px;
+        width: 50%;
+        font-size: 20px;
         font-weight: 900;
         color: #ff6600;
         text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
@@ -132,16 +137,16 @@
     }
     .box-icon {
         position: absolute;
-        top: 10px;
-        left: 0;
-        width: 100px;
-        height: 100px;
+        top: 25px;
+        left: 10px;
+        width: 80px;
+        height: 80px;
     }
     .box-comment {
         position: absolute;
-        top: -20px;
+        top: 5px;
         left: 90px;
-        width: 150px;
+        width: 200px;
         border-radius: 15px;
         box-sizing: border-box;
         padding: 10px;
@@ -171,7 +176,7 @@
     }
     .box-point {
         position: absolute;
-        bottom: 90px;
+        bottom: 75px;
         left: 90px;
         width: 100px;
         font-size: 20px;
@@ -187,9 +192,9 @@
     }
     .box-name {
         position: absolute;
-        top: 120px;
-        left: 10px;
-        width: 180px;
+        bottom: 45px;
+        left: 5px;
+        width: calc(100% - 10px);
         text-align: center;
         word-break: break-all;
         color: #fff;
@@ -199,9 +204,9 @@
     }
     .box-logout {
         position: absolute;
-        bottom: 10px;
-        left: 10px;
-        width: 180px;
+        bottom: 5px;
+        left: 5px;
+        width: calc(100% - 10px);
     }
     .link-create {
         position: absolute;

@@ -41,13 +41,13 @@
         margin-right: 0;
         margin-left: auto;
         display: table;
-        height: 200px;
+        height: 180px;
         & > li {
             display: table-cell;
             width: 100px;
             height: 100px;
             padding-left: 10px;
-            padding-top: 100px;
+            padding-top: 80px;
         }
     }
 </style>

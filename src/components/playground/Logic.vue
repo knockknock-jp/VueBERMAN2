@@ -67,17 +67,7 @@
             }
         },
         created() {
-            // this._uid = this.uid;
             setInterval(()=> {
-                // if (this._uid !== this.uid) {
-                //     this._uid = this.uid;
-                //     if (this.uid) {
-                //         // console.log('ログイン');
-                //         this.initializedPlayer();
-                //     } else {
-                //         // console.log('ログアウト');
-                //     }
-                // }
                 if (!this.map || !this.uid) return;
                 // プレーヤー移動
                 this.movePlayer();

@@ -56,6 +56,7 @@
         font-family: 'Noto Sans JP', sans-serif;
         font-size: 16px;
         letter-spacing: 0.1em;
+        background-color: #000;
     }
     .common__input-text {
         display: block;
@@ -114,21 +115,26 @@
         height: 100%;
     }
     .box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
         width: 100%;
-        height: 100%;
+        height: calc(100% - 200px);
     }
     .box2 {
+        z-index: 1;
         position: absolute;
         bottom: 10px;
         left: 10px;
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
     }
     .box3 {
         position: absolute;
         bottom: 10px;
-        left: 220px;
-        width: calc(100% - 230px);
-        height: 200px;
+        left: 200px;
+        width: calc(100% - 210px);
+        height: 180px;
     }
 </style>

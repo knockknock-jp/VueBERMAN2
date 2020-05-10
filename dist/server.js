@@ -86,8 +86,8 @@ const ITEM_TYPES = [
     CELL_TYPE_ITEM_BOMB_POSSESSIONS,
 ];
 const ITEM_APPEARANCE_PROBABILITY = 0.3; // アイテム出現率
-const GAME_MAP_ROW = 21; // 行
-const GAME_MAP_COL = 31; // 列
+const GAME_MAP_ROW = 51; // 行
+const GAME_MAP_COL = 51; // 列
 
 // ユーザー情報
 let users = [];
@@ -120,7 +120,7 @@ let map = ((row, col)=> {
                     arr2.push(1);
                 }
                 else {
-                    if (Math.random() <= 0.2) {
+                    if (Math.random() <= 0.4) {
                         // ブロック
                         arr2.push(2);
                     } else {

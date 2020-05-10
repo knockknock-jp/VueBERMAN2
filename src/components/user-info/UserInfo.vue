@@ -82,9 +82,10 @@
         position: relative;
         width: 100%;
         height: 100%;
-        border-radius: 10px;
+        border-radius: 5px;
         box-sizing: border-box;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: #333;
+        /*border: solid 1px #333;*/
         &.current {
         }
     }

@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <div ref="view"></div>
+    <div class="container" v-bind:style="{minWidth: minWidth + 'px', minHeight: minHeight + 'px'}">
+        <div class="inner" ref="view"></div>
         <Logic/>
     </div>
 </template>
@@ -42,6 +42,7 @@
         DIRECTION_RIGHT,
         DIRECTION_DOWN,
         DIRECTION_LEFT,
+        FIELD_SCROLL_POSITION,
     } from '../../const'
 
     export default {
@@ -65,8 +66,6 @@
             this.animationCount = 0;
             setInterval(()=> {
                 this.animationCount += 1;
-                // ゲームマップ描画
-                // this.setMap(this.map);
             }, 1000 / 10);
 
             this.mapSprite = null;
@@ -82,7 +81,7 @@
             // マップ読み込み
             this.mapContainer = new PIXI.Container();
             this.mapContainer.sortableChildren = true;
-            this.app.stage.addChild(this.mapContainer);
+            this.gameContainer.addChild(this.mapContainer);
             this.loadMap().then(()=> {
                 // ゲームマップ描画
                 this.setMap(this.map);
@@ -537,6 +536,16 @@
 
         },
         computed: {
+            playerState: function() {
+                if (!this.$store.state.uid) return null;
+                let i, max;
+                for (i = 0, max = this.$store.state.users.length; i < max; i = i + 1) {
+                    if (this.$store.state.uid === this.$store.state.users[i].uid) {
+                        return this.$store.state.users[i].state;
+                    }
+                }
+                return null;
+            },
             invincibly: function() {
                 return this.$store.state.invincibly;
             },
@@ -546,8 +555,72 @@
             users: function() {
                 return this.$store.state.users;
             },
+            minWidth: function() {
+                return GAME_MAP_COL * CELL_SIZE;
+            },
+            minHeight: function() {
+                return (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25);
+            },
         },
         watch: {
+            playerState(val, oldVal) {
+                // 画面スクロール
+                const positionY = Math.floor(this.playerState.displayPositionY * CELL_SIZE);
+                const positionX = Math.floor(this.playerState.displayPositionX * CELL_SIZE);
+                const windowHeight = window.innerHeight - 200;
+                const windowWidth = window.innerWidth;
+                let movingDirectionArr = [val.movingDirectionArr[val.movingDirectionArr.length - 1]];
+                // 初期化時
+                if (oldVal) {
+                    if (!val.death && oldVal.death) {
+                        movingDirectionArr = [];
+                        if (val.displayPositionX < GAME_MAP_COL / 2) {
+                            movingDirectionArr.push(DIRECTION_LEFT);
+                        } else {
+                            movingDirectionArr.push(DIRECTION_RIGHT);
+                        }
+                        if (val.displayPositionY < GAME_MAP_ROW / 2) {
+                            movingDirectionArr.push(DIRECTION_UP);
+                        } else {
+                            movingDirectionArr.push(DIRECTION_DOWN);
+                        }
+                    }
+                }
+                // 上
+                if (movingDirectionArr.indexOf(DIRECTION_UP) >= 0) {
+                    if (positionY + this.gameContainer.y < FIELD_SCROLL_POSITION - CELL_SIZE) {
+                        let y = (FIELD_SCROLL_POSITION - CELL_SIZE) - positionY;
+                        if (0 < y) y = 0;
+                        this.gameContainer.y = y;
+                    }
+                }
+                // 下
+                else if (movingDirectionArr.indexOf(DIRECTION_DOWN) >= 0) {
+                    if (windowHeight - FIELD_SCROLL_POSITION < positionY + this.gameContainer.y) {
+                        let y = windowHeight - FIELD_SCROLL_POSITION - positionY;
+                        let max = windowHeight - ((GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25));
+                        if (y < max) y = max;
+                        this.gameContainer.y = y;
+                    }
+                }
+                // 左
+                if (movingDirectionArr.indexOf(DIRECTION_LEFT) >= 0) {
+                    if (positionX + this.gameContainer.x < FIELD_SCROLL_POSITION - CELL_SIZE) {
+                        let x = (FIELD_SCROLL_POSITION - CELL_SIZE) - positionX;
+                        if (0 < x) x = 0;
+                        this.gameContainer.x = x;
+                    }
+                }
+                // 右
+                else if (movingDirectionArr.indexOf(DIRECTION_RIGHT) >= 0) {
+                    if (windowWidth - FIELD_SCROLL_POSITION < positionX + this.gameContainer.x) {
+                        let x = windowWidth - FIELD_SCROLL_POSITION - positionX;
+                        let max = windowWidth - (GAME_MAP_ROW * CELL_SIZE);
+                        if (x < max) x = max;
+                        this.gameContainer.x = x;
+                    }
+                }
+            },
             map(val) {
                 // console.log('map変更', val);
                 // ゲームマップ描画
@@ -597,6 +670,15 @@
 
 <style scoped lang="scss">
     .container {
-        background-color: #333;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: #555;
+    }
+    .inner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
