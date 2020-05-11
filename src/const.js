@@ -48,6 +48,10 @@ export const DIRECTION_UP = 'up';
 export const DIRECTION_RIGHT = 'right';
 export const DIRECTION_DOWN = 'down';
 export const DIRECTION_LEFT = 'left';
+// プレイログタイプ
+export const PLAY_LOG_TYPE_NORMAL = 0; // 通常
+export const PLAY_LOG_TYPE_EMPHASIS = 1; // 強調
+export const PLAY_LOG_TYPE_ATTENTION = 2; // 注意
 // その他
 export const GAME_MAP_ROW = 51; // 行
 export const GAME_MAP_COL = 51; // 列

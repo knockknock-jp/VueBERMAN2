@@ -14,6 +14,7 @@ import {
     SEND_MAP_STATE,
     PLAY_GAME,
     PAUSE_GAME,
+    SET_PLAY_LOG,
 } from './mutation-types';
 
 Vue.config.productionTip = false;
@@ -55,6 +56,15 @@ Vue.use(Vuex);
         });
     });
 
+    // プレイログ設定
+    socket.on('playLog', (playLog)=>{
+        console.log('socket: playLog', playLog);
+        // プレイログ設定
+        store.commit(SET_PLAY_LOG, {
+            playLog: playLog,
+        });
+    });
+
     const store = new Vuex.Store({
         state: {
             login: false,
@@ -62,6 +72,12 @@ Vue.use(Vuex);
             uid: null,
             users: [],
             map: null,
+            playLog: [],
+            // playLog: [{
+            //     uid: 'uid',
+            //     date: '2020/01/01',
+            //     message: 'ログインしました',
+            // }],
         },
         mutations: {
 
@@ -157,6 +173,12 @@ Vue.use(Vuex);
             [PAUSE_GAME] (state, payload) {
                 // console.log(PAUSE_GAME, state, payload);
                 state.playGame = false;
+            },
+
+            // プレイログ設定
+            [SET_PLAY_LOG] (state, payload) {
+                // console.log(SET_PLAY_LOG, state, payload);
+                state.playLog = payload.playLog;
             },
 
         }

@@ -564,9 +564,10 @@
         },
         watch: {
             playerState(val, oldVal) {
+                if (!val || !val.displayPositionY || !val.displayPositionX) return;
                 // 画面スクロール
-                const positionY = Math.floor(this.playerState.displayPositionY * CELL_SIZE);
-                const positionX = Math.floor(this.playerState.displayPositionX * CELL_SIZE);
+                const positionY = Math.floor(val.displayPositionY * CELL_SIZE);
+                const positionX = Math.floor(val.displayPositionX * CELL_SIZE);
                 const windowHeight = window.innerHeight - 200;
                 const windowWidth = window.innerWidth;
                 let movingDirectionArr = [val.movingDirectionArr[val.movingDirectionArr.length - 1]];

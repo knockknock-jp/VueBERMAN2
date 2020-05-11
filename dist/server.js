@@ -88,6 +88,10 @@ const ITEM_TYPES = [
 const ITEM_APPEARANCE_PROBABILITY = 0.3; // アイテム出現率
 const GAME_MAP_ROW = 51; // 行
 const GAME_MAP_COL = 51; // 列
+// プレイログタイプ
+const PLAY_LOG_TYPE_NORMAL = 0; // 通常
+const PLAY_LOG_TYPE_EMPHASIS = 1; // 強調
+const PLAY_LOG_TYPE_ATTENTION = 2; // 注意
 
 // ユーザー情報
 let users = [];
@@ -153,6 +157,15 @@ let bombsMap = ((row, col)=> {
     }
     return arr;
 })(GAME_MAP_ROW, GAME_MAP_COL);
+
+// プレイログ
+let playLog = [{
+    date: new Date().getTime(),
+    uid: null,
+    name: null,
+    message: 'サーバが再起動されました。',
+    type: PLAY_LOG_TYPE_ATTENTION,
+}];
 
 // マップ更新
 setInterval(()=> {
@@ -464,25 +477,53 @@ io.on('connection', (socket)=> {
 
     io.emit('users', users);
     io.emit('map', map);
+    io.emit('playLog', playLog);
 
     // ユーザー追加
     socket.on('addUser', (user)=> {
         user.sid = socket.id;
         users.unshift(user);
         io.emit('users', users);
+
+        // プレイログ送信
+        playLog.unshift({
+            date: new Date().getTime(),
+            uid: user.uid,
+            name: null,
+            message: user.name + 'がログインしました。',
+            type: PLAY_LOG_TYPE_EMPHASIS,
+        });
+        io.emit('playLog', playLog);
+
     });
 
     // ユーザー削除
     socket.on('removeUser', (uid)=> {
+        let name = null;
         let arr = [];
         let i, max;
         for (i = 0, max = users.length; i < max; i = i + 1) {
             if (users[i].uid !== uid) {
-                arr.push(users[i])
+                arr.push(users[i]);
+            } else {
+                name = users[i].name;
             }
         }
         users = arr;
         io.emit('users', users);
+
+        // プレイログ送信
+        if (name) {
+            playLog.unshift({
+                date: new Date().getTime(),
+                uid: uid,
+                name: name,
+                message: name + 'がログアウトしました。',
+                type: PLAY_LOG_TYPE_NORMAL,
+            });
+            io.emit('playLog', playLog);
+        }
+
     });
 
     // ユーザーコメント送信
@@ -494,6 +535,25 @@ io.on('connection', (socket)=> {
                     date: comment.date,
                     message: comment.message,
                 });
+
+                // プレイログ送信
+                playLog.unshift({
+                    date: new Date().getTime(),
+                    uid: users[i].uid,
+                    name: ((uid)=> {
+                        let i, max;
+                        for (i = 0, max = users.length; i < max; i = i + 1) {
+                            if (users[i].uid === uid) {
+                                return users[i].name;
+                            }
+                        }
+                        return null;
+                    })(users[i].uid),
+                    message: comment.message,
+                    type: PLAY_LOG_TYPE_NORMAL,
+                });
+                io.emit('playLog', playLog);
+
             }
         }
         io.emit('users', users);
@@ -539,15 +599,34 @@ io.on('connection', (socket)=> {
 
     // 接続解除
     socket.on('disconnect', (e)=> {
+        let name = null;
+        let uid = null;
+
         let arr = [];
         let i, max;
         for (i = 0, max = users.length; i < max; i = i + 1) {
             if (users[i].sid !== socket.id) {
-                arr.push(users[i])
+                arr.push(users[i]);
+            } else {
+                name = users[i].name;
+                uid = users[i].uid;
             }
         }
         users = arr;
         io.emit('users', users);
+
+        if (name && uid) {
+            // プレイログ送信
+            playLog.unshift({
+                date: new Date().getTime(),
+                uid: uid,
+                name: name,
+                message: name + 'がログアウトしました。',
+                type: PLAY_LOG_TYPE_NORMAL,
+            });
+            io.emit('playLog', playLog);
+        }
+
     });
 
 });

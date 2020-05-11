@@ -330,35 +330,42 @@
             },
 
             // プレーヤー初期化
-            initializedPlayer: function() {
-                this.playerState.death = false;
-
-                // 左
-                if (this.playerState.currentPositionX < GAME_MAP_COL / 2) {
-                    this.playerState.displayPositionX = 1;
-                    this.playerState.currentPositionX = 1;
+            initializedPlayer: function(y, x) {
+                if (y && x) {
+                    this.playerState.displayPositionX = x;
+                    this.playerState.currentPositionX = x;
+                    this.playerState.displayPositionY = y;
+                    this.playerState.currentPositionY = y;
+                } else {
+                    // 左
+                    if (this.playerState.currentPositionX < GAME_MAP_COL / 2) {
+                        this.playerState.displayPositionX = 1;
+                        this.playerState.currentPositionX = 1;
+                    }
+                    // 右
+                    else {
+                        this.playerState.displayPositionX = GAME_MAP_COL - 2;
+                        this.playerState.currentPositionX = GAME_MAP_COL - 2;
+                    }
+                    // 上
+                    if (this.playerState.currentPositionY < GAME_MAP_ROW / 2) {
+                        this.playerState.displayPositionY = 1;
+                        this.playerState.currentPositionY = 1;
+                    }
+                    // 下
+                    else {
+                        this.playerState.displayPositionY = GAME_MAP_ROW - 2;
+                        this.playerState.currentPositionY = GAME_MAP_ROW - 2;
+                    }
                 }
-                // 右
-                else {
-                    this.playerState.displayPositionX = GAME_MAP_COL - 2;
-                    this.playerState.currentPositionX = GAME_MAP_COL - 2;
-                }
-                // 上
-                if (this.playerState.currentPositionY < GAME_MAP_ROW / 2) {
-                    this.playerState.displayPositionY = 1;
-                    this.playerState.currentPositionY = 1;
-                }
-                // 下
-                else {
-                    this.playerState.displayPositionY = GAME_MAP_ROW - 2;
-                    this.playerState.currentPositionY = GAME_MAP_ROW - 2;
-                }
-
                 this.playerState.moveSpeed = PLAYER_INITIAL_MOVE_SPEED;
                 this.playerState.explosionPower = PLAYER_INITIAL_EXPLOSION_POWER;
                 this.playerState.bombPossessions = PLAYER_INITIAL_BOMB_POSSESSIONS;
                 this.playerState.lastMovingDirection = DIRECTION_DOWN;
                 this.playerState.movingDirectionArr = [];
+
+                // 死亡解除
+                this.playerState.death = false;
 
                 // 無敵設定
                 this.playerState.invincibly = true;
@@ -485,7 +492,27 @@
                 if (val) {
                     // console.log('ログイン');
                     // プレーヤー初期化
-                    this.initializedPlayer();
+                    // const arr = [
+                    //     {
+                    //         x: 1,
+                    //         y: 1,
+                    //     },
+                    //     {
+                    //         x: 1,
+                    //         y: GAME_MAP_ROW -  2,
+                    //     },
+                    //     {
+                    //         x: GAME_MAP_COL - 2,
+                    //         y: 1,
+                    //     },
+                    //     {
+                    //         x: GAME_MAP_COL - 2,
+                    //         y: GAME_MAP_ROW -  2,
+                    //     },
+                    // ];
+                    // const position = arr[Math.floor(Math.random() * arr.length)];
+                    this.initializedPlayer(1, 1);
+                    // this.initializedPlayer(position.y, position.x);
                 } else {
                     // console.log('ログアウト');
                 }

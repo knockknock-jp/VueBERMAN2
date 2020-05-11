@@ -16,3 +16,5 @@ export const SEND_MAP_STATE = 'send_map_state';
 export const PLAY_GAME = 'play_game';
 // ゲーム停止
 export const PAUSE_GAME = 'pause_game';
+// プレイログ設定
+export const SET_PLAY_LOG = 'set_play_log';

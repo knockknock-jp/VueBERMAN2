@@ -41,7 +41,7 @@
                     </dl>
                     <dl class="list-dl">
                         <dt>Name</dt>
-                        <dd><input class="common__input-text" type="text" maxlength="20" v-model="charaName" v-bind:class="charaName ? 'focus' : ''" ref="inputTextName" /></dd>
+                        <dd><input class="common__input-text" type="text" maxlength="18" v-model="charaName" v-bind:class="charaName ? 'focus' : ''" ref="inputTextName" /></dd>
                     </dl>
                     <div class="box">
                         <input class="common__input-submit common__input-submit--large" type="submit" value="LOGIN" v-bind:disabled="!charaName || !charaType ? true : false" />
@@ -90,7 +90,7 @@
 
 <style lang="scss" scoped>
     .wrapper {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;

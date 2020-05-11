@@ -7,10 +7,15 @@
             <Status/>
         </div>
         <div class="box3">
+            <PlayLog/>
+        </div>
+        <div class="box4">
             <UsersInfo/>
         </div>
         <template v-if="!login">
-            <Login/>
+            <div class="box5">
+                <Login/>
+            </div>
         </template>
     </div>
 </template>
@@ -20,6 +25,7 @@
     import Playground from './components/playground/Playground';
     import UsersInfo from './components/UsersInfo';
     import Status from './components/status/Status';
+    import PlayLog from './components/play-log/PlayLog';
 
     export default {
         name: 'App',
@@ -28,6 +34,7 @@
             UsersInfo,
             Status,
             Login,
+            PlayLog,
         },
         computed: {
             login: function() {
@@ -123,7 +130,7 @@
         height: calc(100% - 200px);
     }
     .box2 {
-        z-index: 1;
+        z-index: 2;
         position: absolute;
         bottom: 10px;
         left: 10px;
@@ -131,10 +138,26 @@
         height: 180px;
     }
     .box3 {
+        z-index: 1;
+        position: absolute;
+        bottom: 120px;
+        left: 310px;
+        width: calc(100% - 320px);
+        height: 70px;
+    }
+    .box4 {
         position: absolute;
         bottom: 10px;
-        left: 200px;
-        width: calc(100% - 210px);
+        left: 310px;
+        width: calc(100% - 320px);
         height: 180px;
+    }
+    .box5 {
+        z-index: 3;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
 </style>

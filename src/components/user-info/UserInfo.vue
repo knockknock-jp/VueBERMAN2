@@ -91,9 +91,9 @@
     }
     .box-comment {
         position: absolute;
-        bottom: 105px;
+        bottom: 95px;
         left: 0;
-        border-radius: 10px;
+        border-radius: 15px;
         width: 100px;
         box-sizing: border-box;
         padding: 5px;
@@ -102,7 +102,7 @@
         line-height: 1.2em;
         word-break: break-all;
         color: #000;
-        background-color: rgba(255, 255, 255, 0.7);
+        background-color: #fff;
         &:after {
             display: block;
             position: absolute;
@@ -121,8 +121,8 @@
     }
     .box-icon {
         position: absolute;
-        top: 5px;
-        left: 5px;
+        top: 10px;
+        left: 3px;
         width: 50px;
         height: 50px;
     }
@@ -162,7 +162,7 @@
     }
     .box-name {
         position: absolute;
-        top: 60px;
+        top: 70px;
         left: 0;
         width: 100%;
         box-sizing: border-box;
