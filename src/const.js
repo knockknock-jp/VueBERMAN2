@@ -53,8 +53,13 @@ export const PLAY_LOG_TYPE_NORMAL = 0; // 通常
 export const PLAY_LOG_TYPE_EMPHASIS = 1; // 強調
 export const PLAY_LOG_TYPE_ATTENTION = 2; // 注意
 // その他
-export const GAME_MAP_ROW = 51; // 行
-export const GAME_MAP_COL = 51; // 列
+export const GAME_MAP_ROW = 21; // 行
+export const GAME_MAP_COL = 21; // 列
+// export const GAME_MAP_ROW = 51; // 行
+// export const GAME_MAP_COL = 51; // 列
 export const MAX_MOVE_SPEED = 1; // 最大移動スピード
 export const FIELD_SCROLL_POSITION = 150; // フィールドをスクロール位置
+export const ENEMY_TYPE_001 = 0; // 敵
+export const ENEMY_TYPE_002 = 1; // 敵
+export const ENEMY_TYPE_003 = 2; // 敵
 

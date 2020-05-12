@@ -178,16 +178,16 @@
                     }
                 }
 
-                // // 敵に接触によりプレーヤー死亡
-                // let i, max;
-                // for (i = 0, max = this.enemies.length; i < max; i = i + 1) {
-                //     const enemy = this.enemies[i];
-                //     if (!enemy.death && enemy.y === currentPositionY && enemy.x === currentPositionX) {
-                //         // プレーヤー死亡
-                //         this.deathPlayer();
-                //         return;
-                //     }
-                // }
+                // 敵に接触によりプレーヤー死亡
+                let i, max;
+                for (i = 0, max = this.enemies.length; i < max; i = i + 1) {
+                    const enemy = this.enemies[i];
+                    if (!this.playerState.invincibly && !enemy.death && enemy.currentPositionY === currentPositionY && enemy.currentPositionX === currentPositionX) {
+                        // プレーヤー死亡
+                        this.deathPlayer();
+                        return;
+                    }
+                }
 
                 // プレーヤー移動方向がUPの時
                 if (this.movingDirection() === DIRECTION_UP) {
@@ -485,6 +485,9 @@
             },
             users: function() {
                 return this.$store.state.users;
+            },
+            enemies: function() {
+                return this.$store.state.enemies;
             },
         },
         watch: {

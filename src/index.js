@@ -7,6 +7,7 @@ import io from 'socket.io-client';
 import {
     SET_USERS,
     SET_MAP,
+    SET_ENEMIES,
     LOGIN,
     LOGOUT,
     SEND_COMMENT,
@@ -56,9 +57,18 @@ Vue.use(Vuex);
         });
     });
 
+    // 敵情報
+    socket.on('enemies', (enemies)=>{
+        // console.log('socket: enemies', enemies);
+        // 敵設定
+        store.commit(SET_ENEMIES, {
+            enemies: enemies,
+        });
+    });
+
     // プレイログ設定
     socket.on('playLog', (playLog)=>{
-        console.log('socket: playLog', playLog);
+        // console.log('socket: playLog', playLog);
         // プレイログ設定
         store.commit(SET_PLAY_LOG, {
             playLog: playLog,
@@ -72,6 +82,7 @@ Vue.use(Vuex);
             uid: null,
             users: [],
             map: null,
+            enemies: [],
             playLog: [],
             // playLog: [{
             //     uid: 'uid',
@@ -91,6 +102,12 @@ Vue.use(Vuex);
             [SET_MAP] (state, payload) {
                 // console.log(SET_MAP, state, payload);
                 state.map = payload.map;
+            },
+
+            // 敵設定
+            [SET_ENEMIES] (state, payload) {
+                // console.log(SET_ENEMIES, state, payload);
+                state.enemies = payload.enemies;
             },
 
             // ログイン

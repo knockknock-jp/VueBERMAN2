@@ -1,0 +1,37 @@
+{
+  "frames": {
+    "enemy-left-0": {
+      "frame": {"x":0,"y":0,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
+    "enemy-right-0": {
+      "frame": {"x":0,"y":128,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
+    "enemy-death": {
+      "frame": {"x":0,"y":256,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    }
+  },
+  "meta": {
+    "app": "http://www.texturepacker.com",
+    "version": "1.0",
+    "image": "enemy.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 128,
+      "h": 384
+    },
+    "scale": "1",
+    "smartupdate": "$TexturePacker:SmartUpdate:17e4a2d92ff3e27832c3f4938cec7c85$"
+  }
+}

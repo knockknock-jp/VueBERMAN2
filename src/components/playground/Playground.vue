@@ -43,7 +43,11 @@
         DIRECTION_DOWN,
         DIRECTION_LEFT,
         FIELD_SCROLL_POSITION,
+        ENEMY_TYPE_001,
+        ENEMY_TYPE_002,
+        ENEMY_TYPE_003,
     } from '../../const'
+    import { TweenMax, Linear } from 'gsap';
 
     export default {
         name: 'Playground',
@@ -70,6 +74,7 @@
 
             this.mapSprite = null;
             this.usersSprite = [];
+            this.enemiesSprite = [];
 
             // ゲームコンテナ作成
             this.gameContainer = new PIXI.Container();
@@ -248,6 +253,47 @@
                             sprite: sprite,
                             message: null,
                             commentContainer: null,
+                        });
+                        resolve();
+                    });
+                    loader.load();
+                });
+            },
+
+            // 敵読み込み
+            loadEnemy: function(eid, type) {
+                return new Promise((resolve)=> {
+                    let json = './assets/enemy.json';
+                    switch(type) {
+                        case ENEMY_TYPE_001:
+                            json = './assets/enemy.json'
+                            break;
+                        case ENEMY_TYPE_002:
+                            json = './assets/enemy.json'
+                            break;
+                        case ENEMY_TYPE_003:
+                            json = './assets/enemy3.json'
+                            break;
+                    }
+                    const loader = new PIXI.Loader();
+                    loader.add('sprite', json).once('complete', ()=>{
+                        // スプライト
+                        const textures = [];
+                        textures.push(PIXI.Texture.from('enemy-left-0'));
+                        textures.push(PIXI.Texture.from('enemy-right-0'));
+                        textures.push(PIXI.Texture.from('enemy-death'));
+                        const sprite = new PIXI.AnimatedSprite(textures);
+                        sprite.position.set(0, 0);
+                        sprite.width = CELL_SIZE;
+                        sprite.height = CELL_SIZE ;
+                        sprite.gotoAndStop(0);
+                        this.mapContainer.addChild(sprite);
+                        //
+                        this.enemiesSprite.push({
+                            eid: eid,
+                            sprite: sprite,
+                            currentPositionY: null,
+                            currentPositionX: null,
                         });
                         resolve();
                     });
@@ -534,6 +580,44 @@
                 }
             },
 
+            // 敵描画
+            setEnemy: function(eid, death, currentPositionY, currentPositionX, direction, speed) {
+                let enemyInfo = null;
+                let i, max;
+                for (i = 0, max = this.enemiesSprite.length; i < max; i = i + 1) {
+                    if (eid === this.enemiesSprite[i].eid) {
+                        enemyInfo = this.enemiesSprite[i];
+                        break;
+                    }
+                }
+                if (!enemyInfo || !enemyInfo.sprite) return;
+                // 移動
+                if (enemyInfo.currentPositionY === null && enemyInfo.currentPositionX === null) {
+                    enemyInfo.sprite.position.set(currentPositionX * CELL_SIZE, currentPositionY * CELL_SIZE);
+                    enemyInfo.currentPositionX = currentPositionX;
+                    enemyInfo.currentPositionY = currentPositionY;
+                } else {
+                    if (enemyInfo.currentPositionY !== currentPositionY || enemyInfo.currentPositionX !== currentPositionX) {
+                        enemyInfo.currentPositionX = currentPositionX;
+                        enemyInfo.currentPositionY = currentPositionY;
+                        TweenMax.to(enemyInfo.sprite.position, (1 / 10) * speed, {
+                            y: currentPositionY * CELL_SIZE,
+                            x: currentPositionX * CELL_SIZE,
+                            ease: Linear.easeNone,
+                        });
+                    }
+                }
+                enemyInfo.sprite.zIndex = currentPositionY;
+                // アニメーション
+                if (death) {
+                    enemyInfo.sprite.gotoAndStop(2);
+                } else if (direction === DIRECTION_LEFT) {
+                    enemyInfo.sprite.gotoAndStop(0);
+                } else if (direction === DIRECTION_RIGHT) {
+                    enemyInfo.sprite.gotoAndStop(1);
+                }
+            },
+
         },
         computed: {
             playerState: function() {
@@ -554,6 +638,9 @@
             },
             users: function() {
                 return this.$store.state.users;
+            },
+            enemies: function() {
+                return this.$store.state.enemies;
             },
             minWidth: function() {
                 return GAME_MAP_COL * CELL_SIZE;
@@ -665,6 +752,46 @@
                     }
                 }
             },
+            enemies(val, oldVal) {
+                if (oldVal.length < val.length) {
+                    // 敵読み込み
+                    let i, max;
+                    for (i = 0, max = val.length; i < max; i = i + 1) {
+                        const addedEnemy = val[i];
+                        this.loadEnemy(addedEnemy.eid, addedEnemy.type).then(() => {
+                            // 敵描画
+                            this.setEnemy(addedEnemy.eid, addedEnemy.death, addedEnemy.currentPositionY, addedEnemy.currentPositionX, addedEnemy.direction, addedEnemy.speed);
+                        });
+                    }
+                } else if (val.length < oldVal.length) {
+                    // 不用なSpriteの削除
+                    let i, max;
+                    for (i = 0, max = this.enemiesSprite.length; i < max; i = i + 1) {
+                        let flg = false;
+                        let j, max2;
+                        for (j = 0, max2 = val.length; j < max2; j = j + 1) {
+                            if (this.enemiesSprite[i].eid === val[j].eid) {
+                                flg = true;
+                                break;
+                            }
+                        }
+                        if (!flg) {
+                            this.mapContainer.removeChild(this.enemiesSprite[i].sprite);
+                        }
+                    }
+                    for (i = 0, max = val.length; i < max; i = i + 1) {
+                        // 敵描画
+                        this.setEnemy(val[i].eid, val[i].death, val[i].currentPositionY, val[i].currentPositionX, val[i].direction, val[i].speed);
+                    }
+                } else {
+                    let i, max;
+                    for (i = 0, max = val.length; i < max; i = i + 1) {
+                        // 敵描画
+                        this.setEnemy(val[i].eid, val[i].death, val[i].currentPositionY, val[i].currentPositionX, val[i].direction, val[i].speed);
+                    }
+                }
+
+            }
         }
     }
 </script>

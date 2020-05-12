@@ -1,7 +1,7 @@
 {
-  "name": "vue-webpack-template",
+  "name": "vue-barman2",
   "version": "1.0.0",
-  "description": "Vue.jsとWebpackのテンプレート",
+  "description": "ExpressとSocket.ioとVue.jsとPixi.jsを使ってオンラインボンバーマンを作ってみました。",
   "main": "index.js",
   "scripts": {
     "start": "webpack --mode=development --watch",
@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "es6-promise": "^4.2.8",
+    "gsap": "^3.2.6",
     "pixi.js": "^5.2.4",
     "reset-css": "^5.0.1",
     "socket.io": "^2.3.0",

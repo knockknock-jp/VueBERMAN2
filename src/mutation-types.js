@@ -2,6 +2,8 @@
 export const SET_USERS = 'set_users';
 // ゲームマップ設定
 export const SET_MAP = 'set_map';
+// 敵設定
+export const SET_ENEMIES = 'set_enemies';
 // ログイン
 export const LOGIN = 'login';
 // ログアウト
