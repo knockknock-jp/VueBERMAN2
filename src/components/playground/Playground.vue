@@ -1,6 +1,11 @@
 <template>
     <div class="container" v-bind:style="{minWidth: minWidth + 'px', minHeight: minHeight + 'px'}">
         <div class="inner" ref="view"></div>
+        <template v-if="introOpen">
+            <div class="intro" v-bind:class="introHide ? 'hide' : ''">
+                <span>{{'STAGE ' + (stage + 1) + ' START'}}</span>
+            </div>
+        </template>
         <Logic/>
     </div>
 </template>
@@ -45,7 +50,7 @@
         FIELD_SCROLL_POSITION,
         ENEMY_TYPE_001,
         ENEMY_TYPE_002,
-        ENEMY_TYPE_003,
+        ENEMY_TYPE_003, PLAYER_INITIAL_MOVE_SPEED, PLAYER_INITIAL_EXPLOSION_POWER, PLAYER_INITIAL_BOMB_POSSESSIONS,
     } from '../../const'
     import { TweenMax, Linear } from 'gsap';
 
@@ -53,6 +58,12 @@
         name: 'Playground',
         components: {
             Logic,
+        },
+        data () {
+            return {
+                introOpen: false,
+                introHide: false,
+            }
         },
         mounted() {
 
@@ -91,6 +102,9 @@
                 // ゲームマップ描画
                 this.setMap(this.map);
             });
+
+            // 出口
+            this.exitSprite = null;
 
         },
         methods: {
@@ -269,7 +283,7 @@
                             json = './assets/enemy.json'
                             break;
                         case ENEMY_TYPE_002:
-                            json = './assets/enemy.json'
+                            json = './assets/enemy2.json'
                             break;
                         case ENEMY_TYPE_003:
                             json = './assets/enemy3.json'
@@ -280,7 +294,13 @@
                         // スプライト
                         const textures = [];
                         textures.push(PIXI.Texture.from('enemy-left-0'));
+                        textures.push(PIXI.Texture.from('enemy-left-1'));
+                        textures.push(PIXI.Texture.from('enemy-left-2'));
+                        textures.push(PIXI.Texture.from('enemy-left-3'));
                         textures.push(PIXI.Texture.from('enemy-right-0'));
+                        textures.push(PIXI.Texture.from('enemy-right-1'));
+                        textures.push(PIXI.Texture.from('enemy-right-2'));
+                        textures.push(PIXI.Texture.from('enemy-right-3'));
                         textures.push(PIXI.Texture.from('enemy-death'));
                         const sprite = new PIXI.AnimatedSprite(textures);
                         sprite.position.set(0, 0);
@@ -610,13 +630,61 @@
                 enemyInfo.sprite.zIndex = currentPositionY;
                 // アニメーション
                 if (death) {
-                    enemyInfo.sprite.gotoAndStop(2);
+                    enemyInfo.sprite.gotoAndStop(8);
                 } else if (direction === DIRECTION_LEFT) {
-                    enemyInfo.sprite.gotoAndStop(0);
+                    enemyInfo.sprite.gotoAndStop((this.animationCount % 4));
                 } else if (direction === DIRECTION_RIGHT) {
-                    enemyInfo.sprite.gotoAndStop(1);
+                    enemyInfo.sprite.gotoAndStop((this.animationCount % 4) + 4);
                 }
             },
+
+            // ステージ開始の表示設定
+            setStageIntro: function() {
+
+                this.introOpen = true;
+                setTimeout(()=> {
+                    this.introHide = true;
+                    setTimeout(()=> {
+                        this.introHide = false;
+                        this.introOpen = false;
+                    }, 1000);
+                }, 1000);
+
+                // const container = new PIXI.Container();
+                //
+                // // 背景
+                // const graphics = new PIXI.Graphics();
+                // graphics.beginFill(0x000000, 0.5);
+                // graphics.drawRect(0, 0, this.app.stage.width, this.app.stage.height);
+                // graphics.endFill();
+                // container.addChild(graphics);
+                //
+                // // ステージ名
+                // const text = new PIXI.Text('STAGE ' + (this.stage + 1) + ' START', new PIXI.TextStyle({
+                //     fontSize: 50,
+                //     fontWeight: 'bold',
+                //     lineHeight: 50,
+                //     fill: 0xffffff,
+                //     breakWords: false,
+                //     wordWrap: false,
+                // }));
+                // text.x = (window.innerWidth / 2) - (text.width / 2);
+                // text.y = ((window.innerHeight - 200) / 2) - (text.height / 2);
+                // container.addChild(text);
+                //
+                // this.app.stage.addChild(container);
+                //
+                // // フェードイン
+                // TweenMax.to(container, 1, {
+                //     alpha: 0,
+                //     ease: Linear.easeNone,
+                //     delay : 3,
+                //     onComplete: ()=> {
+                //         this.app.stage.removeChild(container);
+                //     },
+                // });
+
+            }
 
         },
         computed: {
@@ -648,6 +716,12 @@
             minHeight: function() {
                 return (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25);
             },
+            exit: function() {
+                return this.$store.state.exit;
+            },
+            stage: function() {
+                return this.$store.state.stage;
+            }
         },
         watch: {
             playerState(val, oldVal) {
@@ -791,7 +865,23 @@
                     }
                 }
 
-            }
+            },
+            exit(val, oldVal) {
+                if (val) {
+                    this.exitSprite = PIXI.Sprite.from('assets/exit.png');
+                    this.exitSprite.position.set(CELL_SIZE * val.x, CELL_SIZE * val.y);
+                    this.exitSprite.width = CELL_SIZE;
+                    this.exitSprite.height = CELL_SIZE;
+                    this.exitSprite.zIndex = val.y;
+                    this.mapContainer.addChild(this.exitSprite);
+                } else {
+                    this.mapContainer.removeChild(this.exitSprite);
+                }
+            },
+            stage: function(val) {
+                // ステージ開始の表示設定
+                this.setStageIntro();
+            },
         }
     }
 </script>
@@ -808,5 +898,37 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+    .intro {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        opacity: 1;
+        &.hide {
+            opacity: 0;
+            transition-property: opacity;
+            transition-duration: 1s;
+        }
+        & > span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: inline-block;
+            padding: 0 10px;
+            font-size: 50px;
+            font-weight: 900;
+            line-height: 1em;
+            color: #fc0;
+            font-style: italic;
+            background: -webkit-linear-gradient(90deg, #f00, #fc0, #f00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     }
 </style>

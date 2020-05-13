@@ -20,3 +20,7 @@ export const PLAY_GAME = 'play_game';
 export const PAUSE_GAME = 'pause_game';
 // プレイログ設定
 export const SET_PLAY_LOG = 'set_play_log';
+// 出口設定
+export const SET_EXIT = 'set_exit';
+// ステージ変更
+export const CHANGE_STAGE = 'change_stage';

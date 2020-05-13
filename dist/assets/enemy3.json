@@ -7,8 +7,50 @@
       "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
       "sourceSize": {"w":128,"h":128}
     },
+    "enemy-left-1": {
+      "frame": {"x":128,"y":0,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
+    "enemy-left-2": {
+      "frame": {"x":256,"y":0,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
+    "enemy-left-3": {
+      "frame": {"x":384,"y":0,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
     "enemy-right-0": {
       "frame": {"x":0,"y":128,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
+    "enemy-right-1": {
+      "frame": {"x":128,"y":128,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
+    "enemy-right-2": {
+      "frame": {"x":256,"y":128,"w":128,"h":128},
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+      "sourceSize": {"w":128,"h":128}
+    },
+    "enemy-right-3": {
+      "frame": {"x":384,"y":128,"w":128,"h":128},
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
@@ -28,7 +70,7 @@
     "image": "enemy3.png",
     "format": "RGBA8888",
     "size": {
-      "w": 128,
+      "w": 512,
       "h": 384
     },
     "scale": "1",

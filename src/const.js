@@ -32,12 +32,12 @@ export const CELL_TYPE_ITEM_EXPLOSION_POWER = 20; // アイテム（火力）
 export const CELL_TYPE_ITEM_BOMB_POSSESSIONS = 21; // アイテム（爆弾所有数）
 export const CELL_TYPE_ITEM_MOVE_SPEED = 22; // アイテム（移動速度）
 // プレーヤー情報
-export const PLAYER_INITIAL_MOVE_SPEED = 0.2;
-export const PLAYER_INITIAL_EXPLOSION_POWER = 3;
-export const PLAYER_INITIAL_BOMB_POSSESSIONS = 3;
-// export const PLAYER_INITIAL_MOVE_SPEED = 0.1;
-// export const PLAYER_INITIAL_EXPLOSION_POWER = 1;
-// export const PLAYER_INITIAL_BOMB_POSSESSIONS = 1;
+// export const PLAYER_INITIAL_MOVE_SPEED = 0.2;
+// export const PLAYER_INITIAL_EXPLOSION_POWER = 3;
+// export const PLAYER_INITIAL_BOMB_POSSESSIONS = 3;
+export const PLAYER_INITIAL_MOVE_SPEED = 0.1;
+export const PLAYER_INITIAL_EXPLOSION_POWER = 1;
+export const PLAYER_INITIAL_BOMB_POSSESSIONS = 1;
 export const PLAYER_INITIAL_INVINCIBLY_TIME = 5000; // 初期化時無敵時間
 // アイテム情報
 export const ITEM_EXPLOSION_POWER_STEP_UP_POINT =  1; // アイテム（火力）の上昇数
@@ -53,10 +53,10 @@ export const PLAY_LOG_TYPE_NORMAL = 0; // 通常
 export const PLAY_LOG_TYPE_EMPHASIS = 1; // 強調
 export const PLAY_LOG_TYPE_ATTENTION = 2; // 注意
 // その他
-export const GAME_MAP_ROW = 21; // 行
-export const GAME_MAP_COL = 21; // 列
-// export const GAME_MAP_ROW = 51; // 行
-// export const GAME_MAP_COL = 51; // 列
+// export const GAME_MAP_ROW = 11; // 行
+// export const GAME_MAP_COL = 11; // 列
+export const GAME_MAP_ROW = 51; // 行
+export const GAME_MAP_COL = 51; // 列
 export const MAX_MOVE_SPEED = 1; // 最大移動スピード
 export const FIELD_SCROLL_POSITION = 150; // フィールドをスクロール位置
 export const ENEMY_TYPE_001 = 0; // 敵

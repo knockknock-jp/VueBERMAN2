@@ -489,6 +489,9 @@
             enemies: function() {
                 return this.$store.state.enemies;
             },
+            stage: function() {
+                return this.$store.state.stage;
+            }
         },
         watch: {
             login: function(val) {
@@ -514,6 +517,7 @@
                     //     },
                     // ];
                     // const position = arr[Math.floor(Math.random() * arr.length)];
+                    // プレーヤー初期化
                     this.initializedPlayer(1, 1);
                     // this.initializedPlayer(position.y, position.x);
                 } else {
@@ -528,6 +532,10 @@
                     })
                 },
                 deep: true,
+            },
+            stage: function(val) {
+                // プレーヤー初期化
+                this.initializedPlayer();
             },
         },
     }

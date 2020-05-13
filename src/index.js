@@ -16,6 +16,9 @@ import {
     PLAY_GAME,
     PAUSE_GAME,
     SET_PLAY_LOG,
+    SET_EXIT,
+    CHANGE_STAGE,
+    START_STAGE,
 } from './mutation-types';
 
 Vue.config.productionTip = false;
@@ -75,6 +78,24 @@ Vue.use(Vuex);
         });
     });
 
+    // 出口設定
+    socket.on('exit', (exit)=>{
+        // console.log('socket: exit', exit);
+        // 出口設定
+        store.commit(SET_EXIT, {
+            exit: exit,
+        });
+    });
+
+    // ステージ設定
+    socket.on('stage', (stage)=>{
+        // console.log('socket: stage', stage);
+        // ステージ変更
+        store.commit(CHANGE_STAGE, {
+            stage: stage,
+        });
+    });
+
     const store = new Vuex.Store({
         state: {
             login: false,
@@ -84,6 +105,8 @@ Vue.use(Vuex);
             map: null,
             enemies: [],
             playLog: [],
+            exit: null,
+            stage: 0,
             // playLog: [{
             //     uid: 'uid',
             //     date: '2020/01/01',
@@ -196,6 +219,18 @@ Vue.use(Vuex);
             [SET_PLAY_LOG] (state, payload) {
                 // console.log(SET_PLAY_LOG, state, payload);
                 state.playLog = payload.playLog;
+            },
+
+            // 出口設定
+            [SET_EXIT] (state, payload) {
+                // console.log(SET_EXIT, state, payload);
+                state.exit = payload.exit;
+            },
+
+            // ステージ変更
+            [CHANGE_STAGE] (state, payload) {
+                // console.log(CHANGE_STAGE, state, payload);
+                state.stage = payload.stage;
             },
 
         }

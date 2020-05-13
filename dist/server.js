@@ -51,6 +51,14 @@ app.get('/assets/enemy.json', (req, res)=> {
     res.sendFile(__dirname + '/assets/enemy.json');
 });
 
+app.get('/assets/enemy2.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/enemy2.png');
+});
+
+app.get('/assets/enemy2.json', (req, res)=> {
+    res.sendFile(__dirname + '/assets/enemy2.json');
+});
+
 app.get('/assets/enemy3.png', (req, res)=> {
     res.sendFile(__dirname + '/assets/enemy3.png');
 });
@@ -58,6 +66,12 @@ app.get('/assets/enemy3.png', (req, res)=> {
 app.get('/assets/enemy3.json', (req, res)=> {
     res.sendFile(__dirname + '/assets/enemy3.json');
 });
+
+app.get('/assets/exit.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/exit.png');
+});
+
+/* ---------- 定数 ---------- */
 
 const BOMB_STANDBY_TIME = 3; // 爆弾待機時間
 const BOMB_EXPLOSION_TIME = 1; // 爆発持続時間
@@ -109,12 +123,12 @@ const ITEM_TYPES = [
     CELL_TYPE_ITEM_BOMB_POSSESSIONS,
 ];
 const ITEM_APPEARANCE_PROBABILITY = 0.3; // アイテム出現率
-const ENEMY_APPEARANCE_PROBABILITY = 0.05; // 敵出現率
-const BLOCK_APPEARANCE_PROBABILITY = 0.2; // 壊せる壁出現率
-const GAME_MAP_ROW = 21; // 行
-const GAME_MAP_COL = 21; // 列
-// const GAME_MAP_ROW = 51; // 行
-// const GAME_MAP_COL = 51; // 列
+// const ENEMY_APPEARANCE_PROBABILITY = 0.05; // 敵出現率
+// const BLOCK_APPEARANCE_PROBABILITY = 0.2; // 壊せる壁出現率
+// const GAME_MAP_ROW = 11; // 行
+// const GAME_MAP_COL = 11 ; // 列
+const GAME_MAP_ROW = 51; // 行
+const GAME_MAP_COL = 51; // 列
 // プレイログタイプ
 const PLAY_LOG_TYPE_NORMAL = 0; // 通常
 const PLAY_LOG_TYPE_EMPHASIS = 1; // 強調
@@ -124,120 +138,22 @@ const ENEMY_TYPE_001 = 0;
 const ENEMY_TYPE_002 = 1;
 const ENEMY_TYPE_003 = 2;
 const ENEMY_TYPES = [ENEMY_TYPE_001, ENEMY_TYPE_002, ENEMY_TYPE_003];
+// ステージ
+const STAGE_01 = 0;
+const STAGE_02 = 1;
+const STAGE_03 = 2;
+const STAGES = [STAGE_01, STAGE_02, STAGE_03];
+
+/* ---------- 変数 ---------- */
 
 // ユーザー情報
 let users = [];
-
 // ゲームマップ
-let map = ((row, col)=> {
-    let arr = [];
-    let i, max;
-    for (i = 0, max = row; i < max; i = i + 1) {
-        let arr2 = [];
-        let j, max2;
-        for (j = 0, max2 = col; j < max2; j = j + 1) {
-            if (i === 0 || i === row - 1 || j === 0 || j === col - 1 || ((i % 2) === 0 && (j % 2) === 0)) {
-                arr2.push(CELL_TYPE_FIXED);
-            } else {
-                // 左上
-                if (i === 1 && (j === 1 || j === 2) || (i === 2 && j === 1)) {
-                    arr2.push(CELL_TYPE_FREE);
-                }
-                // 左下
-                else if ((i === row - 2 && j === 1) || (i === row - 2 && j === 2) || (i === row - 3 && j === 1)) {
-                    arr2.push(CELL_TYPE_FREE);
-                }
-                // 右上
-                else if ((i === 1 && j === col - 2) || (i === 1 && j === col - 3) || (i === 2 && j === col - 2)) {
-                    arr2.push(CELL_TYPE_FREE);
-                }
-                // 右下
-                else if ((i === row - 2 && j === col - 2) || (i === row - 2 && j === col - 3) || (i === row - 3 && j === col - 2)) {
-                    arr2.push(CELL_TYPE_FREE);
-                }
-                else {
-                    if (Math.random() <= BLOCK_APPEARANCE_PROBABILITY) {
-                        // ブロック
-                        arr2.push(CELL_TYPE_BLOCK);
-                    } else {
-                        // 通路
-                        arr2.push(CELL_TYPE_FREE);
-                    }
-                }
-            }
-        }
-        arr.push(arr2);
-    }
-    return arr;
-})(GAME_MAP_ROW, GAME_MAP_COL);
-
+let map = null;
 // 爆弾マップ
-let bombsMap = ((row, col)=> {
-    let arr = [];
-    let i, max;
-    for (i = 0, max = row; i < max; i = i + 1) {
-        let arr2 = [];
-        let j, max2;
-        for (j = 0, max2 = col; j < max2; j = j + 1) {
-            arr2.push({
-                uid: null,
-                power: null,
-                count: BOMB_COUNT_BLANK,
-            });
-        }
-        arr.push(arr2);
-    }
-    return arr;
-})(GAME_MAP_ROW, GAME_MAP_COL);
-
+let bombsMap = null;
 // 敵情報
-let enemies = (()=> {
-    let arr = [];
-    let i, max;
-    for (i = 0, max = map.length; i < max; i = i + 1) {
-        let j, max2;
-        for (j = 0, max2 = map[i].length; j < max2; j = j + 1) {
-            if (map[i][j] === CELL_TYPE_FREE) {
-                if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
-                    const type = ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
-                    if (type === ENEMY_TYPE_001) {
-                        arr.push({
-                            eid: Math.random().toString(36).slice(-8),
-                            type: ENEMY_TYPE_001,
-                            death: false,
-                            currentPositionY: i,
-                            currentPositionX: j,
-                            direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
-                            speed: 5,
-                        })
-                    } else if (type === ENEMY_TYPE_002) {
-                        arr.push({
-                            eid: Math.random().toString(36).slice(-8),
-                            type: ENEMY_TYPE_002,
-                            death: false,
-                            currentPositionY: i,
-                            currentPositionX: j,
-                            direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
-                            speed: 2,
-                        })
-                    } else if (type === ENEMY_TYPE_003) {
-                        arr.push({
-                            eid: Math.random().toString(36).slice(-8),
-                            type: ENEMY_TYPE_003,
-                            death: false,
-                            currentPositionY: i,
-                            currentPositionX: j,
-                            direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
-                            speed: 10,
-                        })
-                    }
-                }
-            }
-        }
-    }
-    return arr;
-})();
-
+let enemies = null;
 // プレイログ
 let playLog = [{
     date: new Date().getTime(),
@@ -246,6 +162,15 @@ let playLog = [{
     message: 'サーバが再起動されました。',
     type: PLAY_LOG_TYPE_ATTENTION,
 }];
+// ステージレベル（0-3）
+let stage = 0;
+// 出口
+let exit = null;
+
+/* ---------- アクション ---------- */
+
+// ステージ開始
+setStage(stage);
 
 let count = 0;
 setInterval(()=> {
@@ -302,6 +227,74 @@ setInterval(()=> {
     }
     // 敵更新
     io.emit('enemies', enemies);
+
+    // 敵が0になったら扉を出現
+    if (enemies.length <= 0) {
+        if (!exit) {
+            // 出口を出現させる
+            exit = (()=> {
+                let flg = true;
+                while (flg) {
+                    let y = Math.floor(Math.random() * GAME_MAP_ROW);
+                    let x = Math.floor(Math.random() * GAME_MAP_COL);
+                    if (map[y][x] === CELL_TYPE_FREE) {
+                        return {
+                            y: y,
+                            x: x,
+                        }
+                    }
+                }
+            })();
+            io.emit('exit', exit);
+
+            // プレイログ送信
+            playLog.unshift({
+                date: new Date().getTime(),
+                uid: null,
+                name: null,
+                message: '敵をすべて撃破しました。出現した出口に向かってください。一番はじめに出口たどり着くと、100point GET !',
+                type: PLAY_LOG_TYPE_EMPHASIS,
+            });
+            io.emit('playLog', playLog);
+
+        } else {
+            // 出口に到着確認
+            let i, max;
+            for (i = 0, max = users.length; i < max; i = i + 1) {
+                const user = users[i];
+                if (exit.y === user.state.currentPositionY && exit.x === user.state.currentPositionX) {
+
+                    // ポイント加算
+                    addPoint(user.uid, 100);
+
+                    // プレイログ送信
+                    playLog.unshift({
+                        date: new Date().getTime(),
+                        uid: user.uid,
+                        name: user.name,
+                        message: '出口に一番はじめに到着しました。100point GET !',
+                        type: PLAY_LOG_TYPE_NORMAL,
+                    });
+                    playLog.unshift({
+                        date: new Date().getTime(),
+                        uid: null,
+                        name: null,
+                        message: 'ステージ' + (stage + 1) + 'クリア！',
+                        type: PLAY_LOG_TYPE_ATTENTION,
+                    });
+                    io.emit('playLog', playLog);
+
+                    // ステージ設定
+                    let nextStage = stage + 1;
+                    if (STAGES.length <= nextStage) nextStage = STAGES[0];
+                    setStage(nextStage);
+
+                }
+
+            }
+
+        }
+    }
 
     count += 1;
 }, 1000 / 10);
@@ -893,12 +886,217 @@ function moveEnemy(enemy) {
 
 }
 
+// ステージ設定
+function setStage(nextStage) {
+
+    // ステージ設定
+    stage = nextStage;
+    io.emit('stage', stage);
+
+    // ゲームマップ
+    map = ((row, col)=> {
+        let arr = [];
+        let i, max;
+        for (i = 0, max = row; i < max; i = i + 1) {
+            let arr2 = [];
+            let j, max2;
+            for (j = 0, max2 = col; j < max2; j = j + 1) {
+                if (i === 0 || i === row - 1 || j === 0 || j === col - 1 || ((i % 2) === 0 && (j % 2) === 0)) {
+                    arr2.push(CELL_TYPE_FIXED);
+                } else {
+                    // 左上
+                    if (i === 1 && (j === 1 || j === 2) || (i === 2 && j === 1)) {
+                        arr2.push(CELL_TYPE_FREE);
+                    }
+                    // 左下
+                    else if ((i === row - 2 && j === 1) || (i === row - 2 && j === 2) || (i === row - 3 && j === 1)) {
+                        arr2.push(CELL_TYPE_FREE);
+                    }
+                    // 右上
+                    else if ((i === 1 && j === col - 2) || (i === 1 && j === col - 3) || (i === 2 && j === col - 2)) {
+                        arr2.push(CELL_TYPE_FREE);
+                    }
+                    // 右下
+                    else if ((i === row - 2 && j === col - 2) || (i === row - 2 && j === col - 3) || (i === row - 3 && j === col - 2)) {
+                        arr2.push(CELL_TYPE_FREE);
+                    }
+                    else {
+                        // if (Math.random() <= BLOCK_APPEARANCE_PROBABILITY) {
+                        switch (stage) {
+                            case STAGE_01:
+                                if (Math.random() <= 0.2) {
+                                    // ブロック
+                                    arr2.push(CELL_TYPE_BLOCK);
+                                } else {
+                                    // 通路
+                                    arr2.push(CELL_TYPE_FREE);
+                                }
+                                break;
+                            case STAGE_02:
+                                if (Math.random() <= 0.3) {
+                                    // ブロック
+                                    arr2.push(CELL_TYPE_BLOCK);
+                                } else {
+                                    // 通路
+                                    arr2.push(CELL_TYPE_FREE);
+                                }
+                                break;
+                            case STAGE_03:
+                                if (Math.random() <= 0.4) {
+                                    // ブロック
+                                    arr2.push(CELL_TYPE_BLOCK);
+                                } else {
+                                    // 通路
+                                    arr2.push(CELL_TYPE_FREE);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+            arr.push(arr2);
+        }
+        return arr;
+    })(GAME_MAP_ROW, GAME_MAP_COL);
+    io.emit('map', map);
+
+    // 爆弾マップ
+    bombsMap = ((row, col)=> {
+        let arr = [];
+        let i, max;
+        for (i = 0, max = row; i < max; i = i + 1) {
+            let arr2 = [];
+            let j, max2;
+            for (j = 0, max2 = col; j < max2; j = j + 1) {
+                arr2.push({
+                    uid: null,
+                    power: null,
+                    count: BOMB_COUNT_BLANK,
+                });
+            }
+            arr.push(arr2);
+        }
+        return arr;
+    })(GAME_MAP_ROW, GAME_MAP_COL);
+
+    // 敵情報
+    enemies = (()=> {
+        let arr = [];
+        let i, max;
+        for (i = 0, max = map.length; i < max; i = i + 1) {
+            let j, max2;
+            for (j = 0, max2 = map[i].length; j < max2; j = j + 1) {
+                if (map[i][j] === CELL_TYPE_FREE) {
+                    switch (stage) {
+                        case STAGE_01:
+                            // if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
+                            if (Math.random() <= 0.05) {
+                                arr.push({
+                                    eid: Math.random().toString(36).slice(-8),
+                                    type: ENEMY_TYPE_001,
+                                    death: false,
+                                    currentPositionY: i,
+                                    currentPositionX: j,
+                                    direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                    speed: 5,
+                                })
+                            }
+                            break;
+                        case STAGE_02:
+                            // if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
+                            if (Math.random() <= 0.1) {
+                                if (0.7 <= Math.random()) {
+                                    arr.push({
+                                        eid: Math.random().toString(36).slice(-8),
+                                        type: ENEMY_TYPE_003,
+                                        death: false,
+                                        currentPositionY: i,
+                                        currentPositionX: j,
+                                        direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                        speed: 10,
+                                    })
+                                } else {
+                                    arr.push({
+                                        eid: Math.random().toString(36).slice(-8),
+                                        type: ENEMY_TYPE_001,
+                                        death: false,
+                                        currentPositionY: i,
+                                        currentPositionX: j,
+                                        direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                        speed: 5,
+                                    })
+                                }
+                            }
+                            break;
+                        case STAGE_03:
+                            // if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
+                            if (Math.random() <= 0.2) {
+                                if (0.8 <= Math.random()) {
+                                    arr.push({
+                                        eid: Math.random().toString(36).slice(-8),
+                                        type: ENEMY_TYPE_002,
+                                        death: false,
+                                        currentPositionY: i,
+                                        currentPositionX: j,
+                                        direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                        speed: 2,
+                                    })
+                                } else if (0.6 <= Math.random()) {
+                                    arr.push({
+                                        eid: Math.random().toString(36).slice(-8),
+                                        type: ENEMY_TYPE_003,
+                                        death: false,
+                                        currentPositionY: i,
+                                        currentPositionX: j,
+                                        direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                        speed: 10,
+                                    })
+                                } else {
+                                    arr.push({
+                                        eid: Math.random().toString(36).slice(-8),
+                                        type: ENEMY_TYPE_001,
+                                        death: false,
+                                        currentPositionY: i,
+                                        currentPositionX: j,
+                                        direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                        speed: 5,
+                                    })
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        return arr;
+    })();
+    io.emit('enemies', enemies);
+
+    // 出口除去
+    exit = null;
+    io.emit('exit', exit);
+
+    // プレイログ送信
+    playLog.unshift({
+        date: new Date().getTime(),
+        uid: null,
+        name: null,
+        message: 'ステージ' + (stage + 1) + 'スタート！',
+        type: PLAY_LOG_TYPE_ATTENTION,
+    });
+    io.emit('playLog', playLog);
+
+}
+
+/* ---------- ユーザー接続時 ---------- */
+
 io.on('connection', (socket)=> {
 
     io.emit('users', users);
+    io.emit('playLog', playLog);
     io.emit('map', map);
     io.emit('enemies', enemies);
-    io.emit('playLog', playLog);
+    io.emit('exit', exit);
 
     // ユーザー追加
     socket.on('addUser', (user)=> {
