@@ -27,6 +27,20 @@
                 <div class="box-logout">
                     <input class="common__input-submit" type="button" value="LOGOUT" v-on:click="logout()" />
                 </div>
+                <div class="box-item">
+                    <dl class="list-dl">
+                        <dt class="list-dl__dt--bomb"></dt>
+                        <dd>{{bombPossessions}}</dd>
+                    </dl>
+                    <dl class="list-dl">
+                        <dt class="list-dl__dt--fire"></dt>
+                        <dd>{{explosionPower}}</dd>
+                    </dl>
+                    <dl class="list-dl">
+                        <dt class="list-dl__dt--speed"></dt>
+                        <dd>{{moveSpeed}}</dd>
+                    </dl>
+                </div>
             </div>
         </template>
     </div>
@@ -35,6 +49,14 @@
 <script>
     import {LOGOUT, PLAY_GAME, PAUSE_GAME, SEND_COMMENT} from '../../mutation-types';
     import CharacterIcon from '../character-icon/CharacterIcon'
+    import {
+        ITEM_BOMB_POSSESSIONS_STEP_UP_POINT,
+        ITEM_EXPLOSION_POWER_STEP_UP_POINT,
+        ITEM_MOVE_SPEED_STEP_UP_POINT,
+        PLAYER_INITIAL_BOMB_POSSESSIONS,
+        PLAYER_INITIAL_EXPLOSION_POWER,
+        PLAYER_INITIAL_MOVE_SPEED
+    } from "../../const";
 
     export default {
         name: 'Status',
@@ -101,7 +123,16 @@
                 return null;
             },
             usersLength: function() {
-                return this.$store.state.users.length
+                return this.$store.state.users.length;
+            },
+            bombPossessions: function() {
+                return Math.floor((this.user.state.bombPossessions - PLAYER_INITIAL_BOMB_POSSESSIONS) / ITEM_BOMB_POSSESSIONS_STEP_UP_POINT);
+            },
+            explosionPower: function() {
+                return Math.floor((this.user.state.explosionPower - PLAYER_INITIAL_EXPLOSION_POWER) / ITEM_EXPLOSION_POWER_STEP_UP_POINT);
+            },
+            moveSpeed: function() {
+                return Math.floor(((this.user.state.moveSpeed * 1000) - (PLAYER_INITIAL_MOVE_SPEED * 1000)) / (ITEM_MOVE_SPEED_STEP_UP_POINT * 1000));
             },
         },
     }
@@ -229,6 +260,12 @@
             background-color: #a00000;
         }
     }
+    .box-item {
+        position: absolute;
+        bottom: 0;
+        left: 190px;
+        width: 100px;
+    }
     .textarea {
         width: 100%;
         height: 100%;
@@ -243,6 +280,36 @@
         &:focus {
             outline: none;
             background-color: #ccc;
+        }
+    }
+    .list-dl {
+        margin-top: 5px;
+        display: table;
+        & > dt {
+            display: table-cell;
+            text-align: left;
+            vertical-align: middle;
+            width: 25px;
+            height: 25px;
+            background-size: contain;
+            background-position: center;
+            &.list-dl__dt--bomb {
+                background-image: url('./bomb.png');
+            }
+            &.list-dl__dt--fire {
+                background-image: url('./fire.png');
+            }
+            &.list-dl__dt--speed {
+                background-image: url('./speed.png');
+            }
+        }
+        & > dd {
+            display: table-cell;
+            padding-left: 10px;
+            text-align: left;
+            vertical-align: middle;
+            color: #fff;
+            font-size: 12px;
         }
     }
 </style>

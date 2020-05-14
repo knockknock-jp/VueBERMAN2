@@ -323,10 +323,61 @@
             // プレーヤー死亡
             deathPlayer: function() {
                 this.playerState.death = true;
+
+                // アイテム放出
                 setTimeout(()=> {
-                    // プレーヤー初期化
+                    let items = [];
+                    // 爆弾所有アイテム
+                    let bombPossessions = Math.floor((this.playerState.bombPossessions - PLAYER_INITIAL_BOMB_POSSESSIONS) / ITEM_BOMB_POSSESSIONS_STEP_UP_POINT);
+                    let i, max;
+                    for (i = 0, max = bombPossessions; i < max; i = i + 1) {
+                        items.push(CELL_TYPE_ITEM_BOMB_POSSESSIONS);
+                    }
+                    // 火力アイテム
+                    let explosionPower = Math.floor((this.playerState.explosionPower - PLAYER_INITIAL_EXPLOSION_POWER) / ITEM_EXPLOSION_POWER_STEP_UP_POINT);
+                    for (i = 0, max = explosionPower; i < max; i = i + 1) {
+                        items.push(CELL_TYPE_ITEM_EXPLOSION_POWER);
+                    }
+                    // 速度アイテム
+                    let moveSpeed = Math.floor(((this.playerState.moveSpeed * 1000) - (PLAYER_INITIAL_MOVE_SPEED * 1000)) / (ITEM_MOVE_SPEED_STEP_UP_POINT * 1000));
+                    for (i = 0, max = moveSpeed; i < max; i = i + 1) {
+                        items.push(CELL_TYPE_ITEM_MOVE_SPEED);
+                    }
+                    items = (([...array])=> {
+                        for (let i = array.length - 1; i >= 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [array[i], array[j]] = [array[j], array[i]];
+                        }
+                        return array;
+                    })(items);
+
+                    let count = 1;
+                    while(1 <= items.length) {
+                        for (i = -count, max = count; i <= max; i = i + 1) {
+                            let j, max2;
+                            for (j = -count, max2 = count; j <= max2; j = j + 1) {
+                                if ((i === -count || i === count) || (j === -count || j === count)) {
+                                    if (!items || items.length <= 0) break;
+                                    const y = this.playerState.currentPositionY + i;
+                                    const x = this.playerState.currentPositionX + j;
+                                    if (this.map[y] && this.map[y][x]) {
+                                        if (this.map[y][x] === CELL_TYPE_FREE) {
+                                            this.setCellType(y, x, items[0], this.uid);
+                                            items.shift();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        count += 1;
+                    }
+                }, 2000);
+
+                // プレーヤー初期化
+                setTimeout(()=> {
                     this.initializedPlayer();
                 }, 3000);
+
             },
 
             // プレーヤー初期化

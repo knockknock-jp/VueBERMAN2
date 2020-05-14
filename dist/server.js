@@ -990,7 +990,7 @@ function setStage(nextStage) {
                     switch (stage) {
                         case STAGE_01:
                             // if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
-                            if (Math.random() <= 0.05) {
+                            if (Math.random() <= 0.03) {
                                 arr.push({
                                     eid: Math.random().toString(36).slice(-8),
                                     type: ENEMY_TYPE_001,
