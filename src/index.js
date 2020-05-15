@@ -18,7 +18,8 @@ import {
     SET_PLAY_LOG,
     SET_EXIT,
     CHANGE_STAGE,
-    START_STAGE,
+    // START_STAGE,
+    SET_POINT,
 } from './mutation-types';
 
 Vue.config.productionTip = false;
@@ -96,6 +97,15 @@ Vue.use(Vuex);
         });
     });
 
+    // ポイント設定
+    socket.on('points', (points)=>{
+        // console.log('socket: points', points);
+        // ポイント設定
+        store.commit(SET_POINT, {
+            points: points,
+        });
+    });
+
     const store = new Vuex.Store({
         state: {
             login: false,
@@ -107,6 +117,7 @@ Vue.use(Vuex);
             playLog: [],
             exit: null,
             stage: 0,
+            points: [],
             // playLog: [{
             //     uid: 'uid',
             //     date: '2020/01/01',
@@ -231,6 +242,12 @@ Vue.use(Vuex);
             [CHANGE_STAGE] (state, payload) {
                 // console.log(CHANGE_STAGE, state, payload);
                 state.stage = payload.stage;
+            },
+
+            // ポイント設定
+            [SET_POINT] (state, payload) {
+                // console.log(SET_POINT, state, payload);
+                state.points = payload.points;
             },
 
         }

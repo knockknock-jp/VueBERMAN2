@@ -128,6 +128,7 @@ const DIRECTION_ARR = [DIRECTION_UP, DIRECTION_RIGHT, DIRECTION_DOWN, DIRECTION_
 const ADD_POINT_ITEM = 10;
 const ADD_POINT_BLOCK = 1;
 const ADD_POINT_ENEMY = 30;
+const ADD_POINT_EXIT = 100;
 //
 const ITEM_TYPES = [
     CELL_TYPE_ITEM_EXPLOSION_POWER,
@@ -178,6 +179,8 @@ let playLog = [{
 let stage = 0;
 // 出口
 let exit = null;
+// ポイント
+let points = [];
 
 /* ---------- アクション ---------- */
 
@@ -277,14 +280,14 @@ setInterval(()=> {
                 if (exit.y === user.state.currentPositionY && exit.x === user.state.currentPositionX) {
 
                     // ポイント加算
-                    addPoint(user.uid, 100);
+                    addPoint(user.uid, ADD_POINT_EXIT, exit.y, exit.x);
 
                     // プレイログ送信
                     playLog.unshift({
                         date: new Date().getTime(),
                         uid: user.uid,
                         name: user.name,
-                        message: '出口に一番はじめに到着しました。100point GET !',
+                        message: '出口に一番はじめに到着しました。' + ADD_POINT_EXIT + 'point GET !',
                         type: PLAY_LOG_TYPE_NORMAL,
                     });
                     playLog.unshift({
@@ -346,7 +349,7 @@ function setExplosion(y, x, power, uid) {
                 // セルの種類設定（ブロック（壊れた状態））
                 map[tagY][tagX] = CELL_TYPE_BLOCK_BROKEN;
                 // ポイント加算
-                addPoint(uid, ADD_POINT_BLOCK);
+                addPoint(uid, ADD_POINT_BLOCK, tagY, tagX);
                 setTimeout(()=> {
                     // アイテムを出現させる
                     if (Math.random() <= ITEM_APPEARANCE_PROBABILITY) {
@@ -386,7 +389,7 @@ function setExplosion(y, x, power, uid) {
                 // セルの種類設定（爆弾爆発）
                 map[tagY][tagX] = CELL_TYPE_EXPLOSION_B;
                 // ポイント加算
-                addPoint(uid, ADD_POINT_ITEM);
+                addPoint(uid, ADD_POINT_ITEM, tagY, tagX);
             }
 
             // 対象のセルが「通路」の時
@@ -562,7 +565,7 @@ function setExplosion(y, x, power, uid) {
 };
 
 // ポイント加算
-function addPoint(uid, point) {
+function addPoint(uid, point, y, x) {
     let i, max;
     for (i = 0, max = users.length; i < max; i = i + 1) {
         if (uid === users[i].uid) {
@@ -570,6 +573,13 @@ function addPoint(uid, point) {
         }
     }
     io.emit('users', users);
+    //
+    points.unshift({
+        x: x,
+        y: y,
+        value: point,
+    })
+    io.emit('points', points);
 }
 
 // 敵移動
@@ -857,7 +867,7 @@ function moveEnemy(enemy) {
         enemy.death = true;
 
         // ポイント加算
-        addPoint(bomb.uid, ADD_POINT_ENEMY);
+        addPoint(bomb.uid, ADD_POINT_ENEMY, enemy.currentPositionY, enemy.currentPositionX);
 
         // プレイログ送信
         const name = ((uid)=> {

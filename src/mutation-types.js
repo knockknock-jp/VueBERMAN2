@@ -24,3 +24,5 @@ export const SET_PLAY_LOG = 'set_play_log';
 export const SET_EXIT = 'set_exit';
 // ステージ変更
 export const CHANGE_STAGE = 'change_stage';
+// ポイント設定
+export const SET_POINT = 'set_point';

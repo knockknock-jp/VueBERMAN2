@@ -58,7 +58,7 @@
         PLAYER_INITIAL_EXPLOSION_POWER,
         PLAYER_INITIAL_BOMB_POSSESSIONS,
     } from '../../const'
-    import { TweenMax, Linear } from 'gsap';
+    import { TweenMax, Linear, Elastic, Bounce } from 'gsap';
 
     export default {
         name: 'Playground',
@@ -836,6 +836,42 @@
 
             },
 
+            // 獲得ポイント表示
+            setPoint: function(y, x, val) {
+                const text = new PIXI.Text(val + 'point', new PIXI.TextStyle({
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    fontStyle: 'italic',
+                    lineHeight: 18,
+                    fill: 0xa00000,
+                    stroke: '#ffffff',
+                    strokeThickness: 4,
+                }));
+                text.alpha = 0;
+                text.x = (CELL_SIZE * x) + 10;
+                text.y = (CELL_SIZE * y);
+                this.gameContainer.addChild(text);
+
+                // フェードアウト
+                TweenMax.to(text, 0.5, {
+                    alpha: 1,
+                    y: text.y + 10,
+                    ease: Bounce.easeOut,
+                    delay : 0.5,
+                    onComplete: ()=> {
+                        TweenMax.to(text, 0.5, {
+                            alpha: 0,
+                            ease: Linear.easeNone,
+                            delay : 0.5,
+                            onComplete: ()=> {
+                                this.app.stage.removeChild(text);
+                            },
+                        });
+                    },
+                });
+
+            },
+
         },
         computed: {
             playerState: function() {
@@ -871,6 +907,9 @@
             },
             stage: function() {
                 return this.$store.state.stage;
+            },
+            points: function() {
+                return this.$store.state.points;
             }
         },
         watch: {
@@ -1048,6 +1087,12 @@
                 this.stageText.text = 'STAGE ' + (val + 1) + ' / 3';
                 // ステージ開始の表示設定
                 this.setStageIntro();
+            },
+            points: function(val, oldVal) {
+                if (oldVal.length < val.length) {
+                    // 獲得ポイント表示
+                    this.setPoint(val[0].y, val[0].x, val[0].value);
+                }
             },
         }
     }
