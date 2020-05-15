@@ -71,6 +71,18 @@ app.get('/assets/exit.png', (req, res)=> {
     res.sendFile(__dirname + '/assets/exit.png');
 });
 
+app.get('/assets/enemy_sprite.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/enemy_sprite.png');
+});
+
+app.get('/assets/enemy2_sprite.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/enemy2_sprite.png');
+});
+
+app.get('/assets/enemy3_sprite.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/enemy3_sprite.png');
+});
+
 /* ---------- 定数 ---------- */
 
 const BOMB_STANDBY_TIME = 3; // 爆弾待機時間
@@ -907,9 +919,9 @@ function setStage(nextStage) {
                 } else {
 
                     // デバッグ用
-                    if (false) {
-                    // if (true) {
-                        if (Math.random() <= 0.1) {
+                    // if (false) {
+                    if (true) {
+                        if (Math.random() <= 0.01) {
                             // arr2.push(CELL_TYPE_FREE);
                             arr2.push(CELL_TYPE_BLOCK);
                         } else if (Math.random() <= 0.01) {
@@ -1010,9 +1022,9 @@ function setStage(nextStage) {
                 if (map[i][j] === CELL_TYPE_FREE) {
 
                     // デバッグ用
-                    if (false) {
-                    // if (true) {
-                        if (Math.random() <= 0.01) {
+                    // if (false) {
+                    if (true) {
+                        if (Math.random() <= 0.001) {
                             arr.push({
                                 eid: Math.random().toString(36).slice(-8),
                                 type: ENEMY_TYPE_001,
@@ -1022,7 +1034,7 @@ function setStage(nextStage) {
                                 direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
                                 speed: 5,
                             })
-                        } else if (Math.random() <= 0.01) {
+                        } else if (Math.random() <= 0.001) {
                             arr.push({
                                 eid: Math.random().toString(36).slice(-8),
                                 type: ENEMY_TYPE_002,
@@ -1032,7 +1044,7 @@ function setStage(nextStage) {
                                 direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
                                 speed: 2,
                             })
-                        } else if (Math.random() <= 0.01) {
+                        } else if (Math.random() <= 0.001) {
                             arr.push({
                                 eid: Math.random().toString(36).slice(-8),
                                 type: ENEMY_TYPE_003,

@@ -1,13 +1,14 @@
 <template>
-    <div class="container" v-bind:style="{minWidth: minWidth + 'px', minHeight: minHeight + 'px'}">
+<!--    <div class="container" v-bind:style="{minWidth: minWidth + 'px', minHeight: minHeight + 'px'}">-->
+    <div class="container">
         <div class="inner" ref="view"></div>
-        <template v-if="introOpen">
-            <div class="intro" v-bind:class="introHide ? 'hide' : ''">
-                <div class="intro__box">
-                    <span class="intro__text">{{'STAGE ' + (stage + 1) + ' START'}}</span>
-                </div>
-            </div>
-        </template>
+<!--        <template v-if="introOpen">-->
+<!--            <div class="intro" v-bind:class="introHide ? 'hide' : ''">-->
+<!--                <div class="intro__box">-->
+<!--                    <span class="intro__text">{{'STAGE ' + (stage + 1) + ' START'}}</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </template>-->
         <Logic/>
     </div>
 </template>
@@ -52,7 +53,10 @@
         FIELD_SCROLL_POSITION,
         ENEMY_TYPE_001,
         ENEMY_TYPE_002,
-        ENEMY_TYPE_003, PLAYER_INITIAL_MOVE_SPEED, PLAYER_INITIAL_EXPLOSION_POWER, PLAYER_INITIAL_BOMB_POSSESSIONS,
+        ENEMY_TYPE_003,
+        PLAYER_INITIAL_MOVE_SPEED,
+        PLAYER_INITIAL_EXPLOSION_POWER,
+        PLAYER_INITIAL_BOMB_POSSESSIONS,
     } from '../../const'
     import { TweenMax, Linear } from 'gsap';
 
@@ -63,21 +67,66 @@
         },
         data () {
             return {
-                introOpen: false,
-                introHide: false,
+                footerHeight: 200,
+                // introOpen: false,
+                // introHide: false,
             }
         },
         mounted() {
 
             // PIXI.jsアプリケーション初期化
             this.app = new PIXI.Application({
-                width: GAME_MAP_COL * CELL_SIZE,
-                height: (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25),
+                width: window.innerWidth,
+                height: window.innerHeight - 200,
+                // width: GAME_MAP_COL * CELL_SIZE,
+                // height: (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25),
                 backgroundColor: 0x000000,
                 resolution: window.devicePixelRatio || 1,
                 autoResize: true,
             });
             this.$refs.view.appendChild(this.app.view);
+
+            this.mapSprite = null;
+            this.usersSprite = [];
+            this.enemiesSprite = [];
+            this.stageText = null;
+            this.enemyText = null;
+            this.enemy2Text = null;
+            this.enemy3Text = null;
+
+            /*
+            app -> container -> gameContainer（プレーヤーに合わせた画面スクロール） -> mapContainer -> enemy, map, user, exit
+                  -> headerContainer                                                                           -> ground
+            */
+
+            // コンテナ作成
+            this.container = new PIXI.Container();
+            this.app.stage.addChild(this.container);
+
+            // ゲームコンテナ作成
+            this.gameContainer = new PIXI.Container();
+            this.container.addChild(this.gameContainer);
+            // this.app.stage.addChild(this.gameContainer);
+
+            // グランド作成
+            this.createGround();
+
+            // マップ読み込み
+            this.mapContainer = new PIXI.Container();
+            this.mapContainer.sortableChildren = true;
+            this.gameContainer.addChild(this.mapContainer);
+            this.loadMap().then(()=> {
+                // ゲームマップ描画
+                this.setMap(this.map);
+            });
+
+            // ヘッダーコンテナ作成
+            this.headerContainer = new PIXI.Container();
+            this.app.stage.addChild(this.headerContainer);
+            this.createHeader();
+
+            // 出口
+            this.exitSprite = null;
 
             // アニメーションカウント
             this.animationCount = 0;
@@ -95,31 +144,117 @@
 
             }, 1000 / 10);
 
-            this.mapSprite = null;
-            this.usersSprite = [];
-            this.enemiesSprite = [];
-
-            // ゲームコンテナ作成
-            this.gameContainer = new PIXI.Container();
-            this.app.stage.addChild(this.gameContainer);
-
-            // グランド作成
-            this.createGround();
-
-            // マップ読み込み
-            this.mapContainer = new PIXI.Container();
-            this.mapContainer.sortableChildren = true;
-            this.gameContainer.addChild(this.mapContainer);
-            this.loadMap().then(()=> {
-                // ゲームマップ描画
-                this.setMap(this.map);
-            });
-
-            // 出口
-            this.exitSprite = null;
+            // 画面リサイズ
+            window.addEventListener('resize', this.resizeHandler, false);
+            this.resizeHandler();
 
         },
         methods: {
+
+            resizeHandler: function() {
+
+                if (window.innerWidth <= 896) {
+                    this.footerHeight = 150;
+                } else {
+                    this.footerHeight = 200;
+                }
+
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight - this.footerHeight;
+                this.app.renderer.resize(windowWidth, windowHeight);
+
+                // ゲーム画面を中央にする
+                if (this.container.width < windowWidth) {
+                    this.container.x = Math.floor((windowWidth - this.container.width) / 2);
+                } else {
+                    this.container.x = 0;
+                }
+                if (this.container.height < windowHeight) {
+                    this.container.y = Math.floor((windowHeight - this.container.height) / 2);
+                } else {
+                    this.container.y = 0;
+                }
+
+                // ヘッダーを左上にする
+                this.headerContainer.position.set(windowWidth - (this.headerContainer.width + 10), 10);
+
+            },
+
+            // ヘッダー作成
+            createHeader: function() {
+
+                // 背景
+                const graphics = new PIXI.Graphics();
+                graphics.beginFill(0x000000, 0.5);
+                graphics.drawRoundedRect(0, 0, 290, CELL_SIZE + (CELL_SIZE * 0.25), (CELL_SIZE + (CELL_SIZE * 0.25)) / 2);
+                graphics.endFill();
+                graphics.position.set(0, 0);
+                this.headerContainer.addChild(graphics);
+
+                // ステージ
+                this.stageText = new PIXI.Text('STAGE ' + (this.stage + 1) + ' / 3', new PIXI.TextStyle({
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    lineHeight: 16,
+                    fill: 0xffffff,
+                    breakWords: false,
+                    wordWrap: false,
+                }));
+                this.stageText.position.set(20, ((CELL_SIZE + (CELL_SIZE * 0.25)) / 2) - 8);
+                this.headerContainer.addChild(this.stageText);
+
+                // 敵
+                const enemySprite = PIXI.Sprite.from('./assets/enemy_sprite.png');
+                enemySprite.width = 20;
+                enemySprite.height = 20;
+                enemySprite.position.set(130, ((CELL_SIZE + (CELL_SIZE * 0.25)) / 2) - 10);
+                this.headerContainer.addChild(enemySprite);
+                this.enemyText = new PIXI.Text(0, new PIXI.TextStyle({
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    lineHeight: 14,
+                    fill: 0xd86300,
+                    breakWords: false,
+                    wordWrap: false,
+                }));
+                this.enemyText.position.set(155, ((CELL_SIZE + (CELL_SIZE * 0.25)) / 2) - 7);
+                this.headerContainer.addChild(this.enemyText);
+
+                // 敵
+                const enemySprite2 = PIXI.Sprite.from('./assets/enemy3_sprite.png');
+                enemySprite2.width = 20;
+                enemySprite2.height = 20;
+                enemySprite2.position.set(180, ((CELL_SIZE + (CELL_SIZE * 0.25)) / 2) - 10);
+                this.headerContainer.addChild(enemySprite2);
+                this.enemy2Text = new PIXI.Text(0, new PIXI.TextStyle({
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    lineHeight: 14,
+                    fill: 0x2ba2e6,
+                    breakWords: false,
+                    wordWrap: false,
+                }));
+                this.enemy2Text.position.set(205, ((CELL_SIZE + (CELL_SIZE * 0.25)) / 2) - 7);
+                this.headerContainer.addChild(this.enemy2Text);
+
+                // 敵
+                const enemySprite3 = PIXI.Sprite.from('./assets/enemy2_sprite.png');
+                enemySprite3.width = 20;
+                enemySprite3.height = 20;
+                enemySprite3.position.set(230, ((CELL_SIZE + (CELL_SIZE * 0.25)) / 2) - 10);
+                this.headerContainer.addChild(enemySprite3);
+                this.enemy3Text = new PIXI.Text(0, new PIXI.TextStyle({
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    lineHeight: 14,
+                    fill: 0xc21b4a,
+                    breakWords: false,
+                    wordWrap: false,
+                }));
+                this.enemy3Text.position.set(255, ((CELL_SIZE + (CELL_SIZE * 0.25)) / 2) - 7);
+                this.headerContainer.addChild(this.enemy3Text);
+
+            },
 
             // グランド作成
             createGround: function() {
@@ -655,50 +790,51 @@
             // ステージ開始の表示設定
             setStageIntro: function() {
 
-                this.introOpen = true;
-                setTimeout(()=> {
-                    this.introHide = true;
-                    setTimeout(()=> {
-                        this.introHide = false;
-                        this.introOpen = false;
-                    }, 1000);
-                }, 1000);
+                // this.introOpen = true;
+                // setTimeout(()=> {
+                //     this.introHide = true;
+                //     setTimeout(()=> {
+                //         this.introHide = false;
+                //         this.introOpen = false;
+                //     }, 1000);
+                // }, 1000);
 
-                // const container = new PIXI.Container();
-                //
-                // // 背景
-                // const graphics = new PIXI.Graphics();
-                // graphics.beginFill(0x000000, 0.5);
+                const container = new PIXI.Container();
+
+                // 背景
+                const graphics = new PIXI.Graphics();
+                graphics.beginFill(0x000000, 0.5);
+                graphics.drawRect(0, 0, window.innerWidth, window.innerHeight - this.footerHeight);
                 // graphics.drawRect(0, 0, this.app.stage.width, this.app.stage.height);
-                // graphics.endFill();
-                // container.addChild(graphics);
-                //
-                // // ステージ名
-                // const text = new PIXI.Text('STAGE ' + (this.stage + 1) + ' START', new PIXI.TextStyle({
-                //     fontSize: 50,
-                //     fontWeight: 'bold',
-                //     lineHeight: 50,
-                //     fill: 0xffffff,
-                //     breakWords: false,
-                //     wordWrap: false,
-                // }));
-                // text.x = (window.innerWidth / 2) - (text.width / 2);
-                // text.y = ((window.innerHeight - 200) / 2) - (text.height / 2);
-                // container.addChild(text);
-                //
-                // this.app.stage.addChild(container);
-                //
-                // // フェードイン
-                // TweenMax.to(container, 1, {
-                //     alpha: 0,
-                //     ease: Linear.easeNone,
-                //     delay : 3,
-                //     onComplete: ()=> {
-                //         this.app.stage.removeChild(container);
-                //     },
-                // });
+                graphics.endFill();
+                container.addChild(graphics);
 
-            }
+                // ステージ名
+                const text = new PIXI.Text('STAGE ' + (this.stage + 1) + ' START', new PIXI.TextStyle({
+                    fontSize: 40,
+                    fontWeight: 'bold',
+                    lineHeight: 40,
+                    fill: 0xffffff,
+                    breakWords: false,
+                    wordWrap: false,
+                }));
+                text.x = (window.innerWidth / 2) - (text.width / 2);
+                text.y = ((window.innerHeight - this.footerHeight) / 2) - (text.height / 2);
+                container.addChild(text);
+
+                this.app.stage.addChild(container);
+
+                // フェードイン
+                TweenMax.to(container, 1, {
+                    alpha: 0,
+                    ease: Linear.easeNone,
+                    delay : 3,
+                    onComplete: ()=> {
+                        this.app.stage.removeChild(container);
+                    },
+                });
+
+            },
 
         },
         computed: {
@@ -724,12 +860,12 @@
             enemies: function() {
                 return this.$store.state.enemies;
             },
-            minWidth: function() {
-                return GAME_MAP_COL * CELL_SIZE;
-            },
-            minHeight: function() {
-                return (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25);
-            },
+            // minWidth: function() {
+            //     return GAME_MAP_COL * CELL_SIZE;
+            // },
+            // minHeight: function() {
+            //     return (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25);
+            // },
             exit: function() {
                 return this.$store.state.exit;
             },
@@ -743,7 +879,7 @@
                 // 画面スクロール
                 const positionY = Math.floor(val.displayPositionY * CELL_SIZE);
                 const positionX = Math.floor(val.displayPositionX * CELL_SIZE);
-                const windowHeight = window.innerHeight - 200;
+                const windowHeight = window.innerHeight - this.footerHeight;
                 const windowWidth = window.innerWidth;
                 let movingDirectionArr = [val.movingDirectionArr[val.movingDirectionArr.length - 1]];
                 // 初期化時
@@ -878,7 +1014,23 @@
                         this.setEnemy(val[i].eid, val[i].death, val[i].currentPositionY, val[i].currentPositionX, val[i].direction, val[i].speed);
                     }
                 }
-
+                let enemyCount = 0;
+                let enemy2Count = 0;
+                let enemy3Count = 0;
+                let i, max;
+                for (i = 0, max = val.length; i < max; i = i + 1) {
+                    const enemy = val[i];
+                    if (enemy.type === ENEMY_TYPE_001) {
+                        enemyCount += 1;
+                    } else if (enemy.type === ENEMY_TYPE_002) {
+                        enemy2Count += 1;
+                    } else if (enemy.type === ENEMY_TYPE_003) {
+                        enemy3Count += 1;
+                    }
+                }
+                this.enemyText.text = enemyCount;
+                this.enemy2Text.text = enemy3Count;
+                this.enemy3Text.text = enemy2Count;
             },
             exit(val, oldVal) {
                 if (val) {
@@ -893,6 +1045,7 @@
                 }
             },
             stage: function(val) {
+                this.stageText.text = 'STAGE ' + (val + 1) + ' / 3';
                 // ステージ開始の表示設定
                 this.setStageIntro();
             },
@@ -913,6 +1066,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
+    /*
     .intro {
         position: fixed;
         top: 0;
@@ -947,16 +1101,17 @@
             -webkit-text-fill-color: transparent;
         }
     }
-    @media screen and (max-width: 896px) {
-        .intro {
-            height: calc(100% - 150px);
-            &__box {
-                padding: 20px;
-                text-align: center;
-            }
-            &__text {
-                font-size: 30px;
-            }
-        }
-    }
+    */
+    /*@media screen and (max-width: 896px) {*/
+    /*    .intro {*/
+    /*        height: calc(100% - 150px);*/
+    /*        &__box {*/
+    /*            padding: 20px;*/
+    /*            text-align: center;*/
+    /*        }*/
+    /*        &__text {*/
+    /*            font-size: 30px;*/
+    /*        }*/
+    /*    }*/
+    /*}*/
 </style>
