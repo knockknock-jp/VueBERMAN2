@@ -3,7 +3,9 @@
         <div class="inner" ref="view"></div>
         <template v-if="introOpen">
             <div class="intro" v-bind:class="introHide ? 'hide' : ''">
-                <span>{{'STAGE ' + (stage + 1) + ' START'}}</span>
+                <div class="intro__box">
+                    <span class="intro__text">{{'STAGE ' + (stage + 1) + ' START'}}</span>
+                </div>
             </div>
         </template>
         <Logic/>
@@ -81,6 +83,16 @@
             this.animationCount = 0;
             setInterval(()=> {
                 this.animationCount += 1;
+
+                // 出口点滅
+                if (this.exit) {
+                    if (Math.floor(this.animationCount / 3) % 2) {
+                        this.exitSprite.alpha = 0;
+                    } else {
+                        this.exitSprite.alpha = 1;
+                    }
+                }
+
             }, 1000 / 10);
 
             this.mapSprite = null;
@@ -119,6 +131,8 @@
                         const graphics = new PIXI.Graphics();
                         if (j % 2 && i % 2) {
                             graphics.beginFill(0x62972c);
+                        } else if (GAME_MAP_ROW - 1 <= i) {
+                            graphics.beginFill(0x000000);
                         } else {
                             graphics.beginFill(0x5d8f2b);
                         }
@@ -900,13 +914,13 @@
         transform: translate(-50%, -50%);
     }
     .intro {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         bottom: 0;
         right: 0;
         width: 100%;
-        height: 100%;
+        height: calc(100% - 200px);
         background-color: rgba(0, 0, 0, 0.7);
         opacity: 1;
         &.hide {
@@ -914,13 +928,15 @@
             transition-property: opacity;
             transition-duration: 1s;
         }
-        & > span {
+        &__box {
             position: absolute;
             top: 50%;
             left: 50%;
+            padding: 20px 30px;
             transform: translate(-50%, -50%);
-            display: inline-block;
-            padding: 0 10px;
+            background-color: #000;
+        }
+        &__text {
             font-size: 50px;
             font-weight: 900;
             line-height: 1em;
@@ -929,6 +945,18 @@
             background: -webkit-linear-gradient(90deg, #f00, #fc0, #f00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+    }
+    @media screen and (max-width: 896px) {
+        .intro {
+            height: calc(100% - 150px);
+            &__box {
+                padding: 20px;
+                text-align: center;
+            }
+            &__text {
+                font-size: 30px;
+            }
         }
     }
 </style>

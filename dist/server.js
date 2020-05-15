@@ -902,8 +902,29 @@ function setStage(nextStage) {
             let j, max2;
             for (j = 0, max2 = col; j < max2; j = j + 1) {
                 if (i === 0 || i === row - 1 || j === 0 || j === col - 1 || ((i % 2) === 0 && (j % 2) === 0)) {
+                // if (i === 0 || i === row - 1 || j === 0 || j === col - 1) {
                     arr2.push(CELL_TYPE_FIXED);
                 } else {
+
+                    // デバッグ用
+                    if (false) {
+                    // if (true) {
+                        if (Math.random() <= 0.1) {
+                            // arr2.push(CELL_TYPE_FREE);
+                            arr2.push(CELL_TYPE_BLOCK);
+                        } else if (Math.random() <= 0.01) {
+                            arr2.push(CELL_TYPE_ITEM_EXPLOSION_POWER);
+                        } else if (Math.random() <= 0.01) {
+                            arr2.push(CELL_TYPE_ITEM_MOVE_SPEED);
+                        } else if (Math.random() <= 0.01) {
+                            arr2.push(CELL_TYPE_ITEM_BOMB_POSSESSIONS);
+                        } else {
+                            arr2.push(CELL_TYPE_FREE);
+                        }
+                        continue;
+                    }
+                    // /デバッグ用
+
                     // 左上
                     if (i === 1 && (j === 1 || j === 2) || (i === 2 && j === 1)) {
                         arr2.push(CELL_TYPE_FREE);
@@ -987,6 +1008,45 @@ function setStage(nextStage) {
             let j, max2;
             for (j = 0, max2 = map[i].length; j < max2; j = j + 1) {
                 if (map[i][j] === CELL_TYPE_FREE) {
+
+                    // デバッグ用
+                    if (false) {
+                    // if (true) {
+                        if (Math.random() <= 0.01) {
+                            arr.push({
+                                eid: Math.random().toString(36).slice(-8),
+                                type: ENEMY_TYPE_001,
+                                death: false,
+                                currentPositionY: i,
+                                currentPositionX: j,
+                                direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                speed: 5,
+                            })
+                        } else if (Math.random() <= 0.01) {
+                            arr.push({
+                                eid: Math.random().toString(36).slice(-8),
+                                type: ENEMY_TYPE_002,
+                                death: false,
+                                currentPositionY: i,
+                                currentPositionX: j,
+                                direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                speed: 2,
+                            })
+                        } else if (Math.random() <= 0.01) {
+                            arr.push({
+                                eid: Math.random().toString(36).slice(-8),
+                                type: ENEMY_TYPE_003,
+                                death: false,
+                                currentPositionY: i,
+                                currentPositionX: j,
+                                direction: DIRECTION_ARR[Math.floor(Math.random() * DIRECTION_ARR.length)],
+                                speed: 10,
+                            })
+                        }
+                        continue;
+                    }
+                    // /デバッグ用
+
                     switch (stage) {
                         case STAGE_01:
                             // if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
@@ -1150,28 +1210,33 @@ io.on('connection', (socket)=> {
         let i, max;
         for (i = 0, max = users.length; i < max; i = i + 1) {
             if (users[i].uid === comment.uid) {
+                // 同じコメントは除去
+                if (users[i].comments && users[i].comments[0] && users[i].comments[0].message === comment.message) return;
+
                 users[i].comments.unshift({
                     date: comment.date,
                     message: comment.message,
                 });
 
-                // プレイログ送信
-                playLog.unshift({
-                    date: new Date().getTime(),
-                    uid: users[i].uid,
-                    name: ((uid)=> {
-                        let i, max;
-                        for (i = 0, max = users.length; i < max; i = i + 1) {
-                            if (users[i].uid === uid) {
-                                return users[i].name;
+                if (comment.message && comment.message !== '') {
+                    // プレイログ送信
+                    playLog.unshift({
+                        date: new Date().getTime(),
+                        uid: users[i].uid,
+                        name: ((uid)=> {
+                            let i, max;
+                            for (i = 0, max = users.length; i < max; i = i + 1) {
+                                if (users[i].uid === uid) {
+                                    return users[i].name;
+                                }
                             }
-                        }
-                        return null;
-                    })(users[i].uid),
-                    message: comment.message,
-                    type: PLAY_LOG_TYPE_NORMAL,
-                });
-                io.emit('playLog', playLog);
+                            return null;
+                        })(users[i].uid),
+                        message: comment.message,
+                        type: PLAY_LOG_TYPE_NORMAL,
+                    });
+                    io.emit('playLog', playLog);
+                }
 
             }
         }

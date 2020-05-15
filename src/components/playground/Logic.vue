@@ -381,7 +381,7 @@
             },
 
             // プレーヤー初期化
-            initializedPlayer: function(y, x) {
+            initializedPlayer: function(y, x, saveItem) {
                 if (y && x) {
                     this.playerState.displayPositionX = x;
                     this.playerState.currentPositionX = x;
@@ -409,9 +409,11 @@
                         this.playerState.currentPositionY = GAME_MAP_ROW - 2;
                     }
                 }
-                this.playerState.moveSpeed = PLAYER_INITIAL_MOVE_SPEED;
-                this.playerState.explosionPower = PLAYER_INITIAL_EXPLOSION_POWER;
-                this.playerState.bombPossessions = PLAYER_INITIAL_BOMB_POSSESSIONS;
+                if (!saveItem) {
+                    this.playerState.moveSpeed = PLAYER_INITIAL_MOVE_SPEED;
+                    this.playerState.explosionPower = PLAYER_INITIAL_EXPLOSION_POWER;
+                    this.playerState.bombPossessions = PLAYER_INITIAL_BOMB_POSSESSIONS;
+                }
                 this.playerState.lastMovingDirection = DIRECTION_DOWN;
                 this.playerState.movingDirectionArr = [];
 
@@ -585,8 +587,8 @@
                 deep: true,
             },
             stage: function(val) {
-                // プレーヤー初期化
-                this.initializedPlayer();
+                // プレーヤー初期化（位置は現在一から四隅を判定して、アイテムは保持したままで）
+                this.initializedPlayer(null, null, true);
             },
         },
     }

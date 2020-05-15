@@ -76,6 +76,7 @@
             editMessage: function() {
                 if (this.isEditing) {
                     this.isEditing = false;
+
                     this.$store.commit(SEND_COMMENT, {
                         message: this.inputMessage
                     });
@@ -310,6 +311,54 @@
             vertical-align: middle;
             color: #fff;
             font-size: 12px;
+        }
+    }
+    @media screen and (max-width: 896px) {
+        .container {
+            border-radius: 0;
+            background-color: #000;
+        }
+        .box-lank {
+            top: 0;
+            left: 5px;
+            font-size: 16px;
+        }
+        .box-icon {
+            left: 0;
+            width: 60px;
+            height: 60px;
+        }
+        .box-comment {
+            z-index: 1;
+            left: 60px;
+        }
+        .box-point {
+            bottom: 65px;
+            left: 60px;
+            width: 100px;
+            font-size: 16px;
+        }
+        .box-name {
+            left: 60px;
+            width: 230px;
+            text-align: left;
+        }
+        .link-create {
+            bottom: 0;
+            right: -25px;
+            width: 35px;
+            height: 35px;
+            background-size: 20px 20px;
+        }
+        .box-item {
+            top: 0;
+            bottom: auto;
+            left: auto;
+            right: 0;
+            width: 60px;
+        }
+        .list-dl {
+            margin-top: 3px;
         }
     }
 </style>

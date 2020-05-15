@@ -160,4 +160,22 @@
         width: 100%;
         height: 100%;
     }
+    @media screen and (max-width: 896px) {
+        .box {
+            height: calc(100% - 150px);
+        }
+        .box2 {
+            height: 130px;
+            width: calc(100% - 20px);
+        }
+        .box3 {
+            display: none;
+        }
+        .box4 {
+            display: none;
+        }
+        .box5 {
+            position: absolute;
+        }
+    }
 </style>

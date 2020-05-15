@@ -212,4 +212,27 @@
             background-color: #333;
         }
     }
+    @media screen and (max-width: 896px) {
+        .wrapper {
+            background: #000;
+        }
+        .container {
+            top: 50%;
+            padding: 20px;
+            max-width: 100%;
+        }
+        .heading {
+            padding: 20px;
+            & > span {
+                font-size: 30px;
+                & > span {
+                    width: 30px;
+                    height: 30px;
+                }
+            }
+        }
+        .list-dl2 {
+            display: none;
+        }
+    }
 </style>
