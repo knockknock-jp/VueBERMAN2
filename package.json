@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack --mode=development --watch",
     "prod": "NODE_ENV=production webpack --mode=production",
-    "serve": "webpack-dev-server"
+    "serve": "webpack-dev-server",
+    "http-server": "http-server ./dist -p 8888 -o test.html"
   },
   "author": "nishida@knockknock.jp",
   "license": "ISC",
@@ -43,6 +44,7 @@
   "dependencies": {
     "es6-promise": "^4.2.8",
     "gsap": "^3.2.6",
+    "http-server": "^0.12.3",
     "pixi.js": "^5.2.4",
     "reset-css": "^5.0.1",
     "socket.io": "^2.3.0",

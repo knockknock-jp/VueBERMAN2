@@ -4,6 +4,7 @@ module.exports = {
     mode: (process.env.NODE_ENV !== 'production') ? 'development' : 'production',
     entry: {
         'main': './src/index.js',
+        'test': './src/test.js',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

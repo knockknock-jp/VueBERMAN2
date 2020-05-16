@@ -9,6 +9,9 @@
 <!--                </div>-->
 <!--            </div>-->
 <!--        </template>-->
+<!--        <template v-if="pixiApp">-->
+<!--            <Controller v-bind:pixiApp="pixiApp"/>-->
+<!--        </template>-->
         <Logic/>
     </div>
 </template>
@@ -23,9 +26,9 @@
         CELL_SIZE,
         GAME_MAP_ROW,
         GAME_MAP_COL,
-        CELL_TYPE_FIXED,
-        CELL_TYPE_FREE,
-        CELL_TYPE_BLOCK,
+        // CELL_TYPE_FIXED,
+        // CELL_TYPE_FREE,
+        // CELL_TYPE_BLOCK,
         CELL_TYPE_BLOCK_BROKEN,
         CELL_TYPE_BOMB,
         CELL_TYPE_EXPLOSION_B,
@@ -54,20 +57,23 @@
         ENEMY_TYPE_001,
         ENEMY_TYPE_002,
         ENEMY_TYPE_003,
-        PLAYER_INITIAL_MOVE_SPEED,
-        PLAYER_INITIAL_EXPLOSION_POWER,
-        PLAYER_INITIAL_BOMB_POSSESSIONS,
+        // PLAYER_INITIAL_MOVE_SPEED,
+        // PLAYER_INITIAL_EXPLOSION_POWER,
+        // PLAYER_INITIAL_BOMB_POSSESSIONS,
     } from '../../const'
     import { TweenMax, Linear, Elastic, Bounce } from 'gsap';
+    // import Controller from './Controller';
 
     export default {
         name: 'Playground',
         components: {
             Logic,
+            // Controller,
         },
         data () {
             return {
                 footerHeight: 200,
+                // pixiApp,
                 // introOpen: false,
                 // introHide: false,
             }
@@ -75,7 +81,7 @@
         mounted() {
 
             // PIXI.jsアプリケーション初期化
-            this.app = new PIXI.Application({
+            this.pixiApp = new PIXI.Application({
                 width: window.innerWidth,
                 height: window.innerHeight - 200,
                 // width: GAME_MAP_COL * CELL_SIZE,
@@ -84,7 +90,7 @@
                 resolution: window.devicePixelRatio || 1,
                 autoResize: true,
             });
-            this.$refs.view.appendChild(this.app.view);
+            this.$refs.view.appendChild(this.pixiApp.view);
 
             this.mapSprite = null;
             this.usersSprite = [];
@@ -101,12 +107,12 @@
 
             // コンテナ作成
             this.container = new PIXI.Container();
-            this.app.stage.addChild(this.container);
+            this.pixiApp.stage.addChild(this.container);
 
             // ゲームコンテナ作成
             this.gameContainer = new PIXI.Container();
             this.container.addChild(this.gameContainer);
-            // this.app.stage.addChild(this.gameContainer);
+            // this.pixiApp.stage.addChild(this.gameContainer);
 
             // グランド作成
             this.createGround();
@@ -122,7 +128,7 @@
 
             // ヘッダーコンテナ作成
             this.headerContainer = new PIXI.Container();
-            this.app.stage.addChild(this.headerContainer);
+            this.pixiApp.stage.addChild(this.headerContainer);
             this.createHeader();
 
             // 出口
@@ -161,7 +167,7 @@
 
                 const windowWidth = window.innerWidth;
                 const windowHeight = window.innerHeight - this.footerHeight;
-                this.app.renderer.resize(windowWidth, windowHeight);
+                this.pixiApp.renderer.resize(windowWidth, windowHeight);
 
                 // ゲーム画面を中央にする
                 if (this.container.width < windowWidth) {
@@ -337,7 +343,7 @@
                                 animatedSprite.height = CELL_SIZE + (CELL_SIZE * 0.25);
                                 // animatedSprite.zIndex = i * CELL_SIZE;
                                 this.mapContainer.addChild(animatedSprite);
-                                // this.app.stage.addChild(animatedSprite);
+                                // this.pixiApp.stage.addChild(animatedSprite);
                                 animatedSprite.gotoAndStop(1);
                                 arr.push(animatedSprite);
                             }
@@ -805,7 +811,7 @@
                 const graphics = new PIXI.Graphics();
                 graphics.beginFill(0x000000, 0.5);
                 graphics.drawRect(0, 0, window.innerWidth, window.innerHeight - this.footerHeight);
-                // graphics.drawRect(0, 0, this.app.stage.width, this.app.stage.height);
+                // graphics.drawRect(0, 0, this.pixiApp.stage.width, this.pixiApp.stage.height);
                 graphics.endFill();
                 container.addChild(graphics);
 
@@ -822,7 +828,7 @@
                 text.y = ((window.innerHeight - this.footerHeight) / 2) - (text.height / 2);
                 container.addChild(text);
 
-                this.app.stage.addChild(container);
+                this.pixiApp.stage.addChild(container);
 
                 // フェードイン
                 TweenMax.to(container, 1, {
@@ -830,7 +836,7 @@
                     ease: Linear.easeNone,
                     delay : 3,
                     onComplete: ()=> {
-                        this.app.stage.removeChild(container);
+                        this.pixiApp.stage.removeChild(container);
                     },
                 });
 
@@ -864,7 +870,7 @@
                             ease: Linear.easeNone,
                             delay : 0.5,
                             onComplete: ()=> {
-                                this.app.stage.removeChild(text);
+                                this.pixiApp.stage.removeChild(text);
                             },
                         });
                     },
