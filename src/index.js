@@ -21,6 +21,10 @@ import {
     // START_STAGE,
     SET_POINT,
 } from './mutation-types';
+import {
+    GAME_MAP_COL,
+    GAME_MAP_ROW,
+} from "./const";
 
 Vue.config.productionTip = false;
 Vue.use(Vuex);

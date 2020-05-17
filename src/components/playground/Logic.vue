@@ -567,28 +567,28 @@
                 if (val) {
                     // console.log('ログイン');
                     // プレーヤー初期化
-                    // const arr = [
-                    //     {
-                    //         x: 1,
-                    //         y: 1,
-                    //     },
-                    //     {
-                    //         x: 1,
-                    //         y: GAME_MAP_ROW -  2,
-                    //     },
-                    //     {
-                    //         x: GAME_MAP_COL - 2,
-                    //         y: 1,
-                    //     },
-                    //     {
-                    //         x: GAME_MAP_COL - 2,
-                    //         y: GAME_MAP_ROW -  2,
-                    //     },
-                    // ];
-                    // const position = arr[Math.floor(Math.random() * arr.length)];
+                    const arr = [
+                        {
+                            x: 1,
+                            y: 1,
+                        },
+                        {
+                            x: 1,
+                            y: GAME_MAP_ROW -  2,
+                        },
+                        {
+                            x: GAME_MAP_COL - 2,
+                            y: 1,
+                        },
+                        {
+                            x: GAME_MAP_COL - 2,
+                            y: GAME_MAP_ROW -  2,
+                        },
+                    ];
+                    const position = arr[Math.floor(Math.random() * arr.length)];
                     // プレーヤー初期化
-                    this.initializedPlayer(1, 1);
-                    // this.initializedPlayer(position.y, position.x);
+                    // this.initializedPlayer(1, 1);
+                    this.initializedPlayer(position.y, position.x);
                 } else {
                     // console.log('ログアウト');
                 }

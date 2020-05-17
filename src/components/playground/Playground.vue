@@ -1,17 +1,6 @@
 <template>
-<!--    <div class="container" v-bind:style="{minWidth: minWidth + 'px', minHeight: minHeight + 'px'}">-->
     <div class="container">
         <div class="inner" ref="view"></div>
-<!--        <template v-if="introOpen">-->
-<!--            <div class="intro" v-bind:class="introHide ? 'hide' : ''">-->
-<!--                <div class="intro__box">-->
-<!--                    <span class="intro__text">{{'STAGE ' + (stage + 1) + ' START'}}</span>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </template>-->
-<!--        <template v-if="pixiApp">-->
-<!--            <Controller v-bind:pixiApp="pixiApp"/>-->
-<!--        </template>-->
         <Logic ref="logic"/>
     </div>
 </template>
@@ -26,9 +15,6 @@
         CELL_SIZE,
         GAME_MAP_ROW,
         GAME_MAP_COL,
-        // CELL_TYPE_FIXED,
-        // CELL_TYPE_FREE,
-        // CELL_TYPE_BLOCK,
         CELL_TYPE_BLOCK_BROKEN,
         CELL_TYPE_BOMB,
         CELL_TYPE_EXPLOSION_B,
@@ -57,26 +43,18 @@
         ENEMY_TYPE_001,
         ENEMY_TYPE_002,
         ENEMY_TYPE_003,
-        // PLAYER_INITIAL_MOVE_SPEED,
-        // PLAYER_INITIAL_EXPLOSION_POWER,
-        // PLAYER_INITIAL_BOMB_POSSESSIONS,
     } from '../../const'
     import { TweenMax, Linear, Bounce } from 'gsap';
     import {SEND_USER_STATE} from "../../mutation-types";
-    // import Controller from './Controller';
 
     export default {
         name: 'Playground',
         components: {
             Logic,
-            // Controller,
         },
         data () {
             return {
                 footerHeight: 200,
-                // pixiApp,
-                // introOpen: false,
-                // introHide: false,
                 isPointerMove: false,
                 direction: null,
             }
@@ -1142,6 +1120,9 @@
 
         },
         computed: {
+            login: function() {
+                return this.$store.state.login;
+            },
             playerState: function() {
                 if (!this.$store.state.uid) return null;
                 let i, max;
@@ -1164,12 +1145,6 @@
             enemies: function() {
                 return this.$store.state.enemies;
             },
-            // minWidth: function() {
-            //     return GAME_MAP_COL * CELL_SIZE;
-            // },
-            // minHeight: function() {
-            //     return (GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25);
-            // },
             exit: function() {
                 return this.$store.state.exit;
             },
@@ -1181,6 +1156,38 @@
             }
         },
         watch: {
+            login(val, oldVal) {
+                if (val) {
+                    setTimeout(()=> {
+                        const windowHeight = window.innerHeight - this.footerHeight;
+                        const windowWidth = window.innerWidth;
+                        // 左
+                        if (this.playerState.currentPositionX < GAME_MAP_COL / 2) {
+                            this.gameContainer.x = 0;
+                        }
+                        // 右
+                        else {
+                            let x = windowWidth - FIELD_SCROLL_POSITION - (this.playerState.currentPositionX * CELL_SIZE);
+                            let max = windowWidth - (GAME_MAP_ROW * CELL_SIZE);
+                            if (x < max) x = max;
+                            this.gameContainer.x = x;
+                        }
+                        // 上
+                        if (this.playerState.currentPositionY < GAME_MAP_ROW / 2) {
+                            this.gameContainer.y = 0;
+                        }
+                        // 下
+                        else {
+                            let y = windowHeight - FIELD_SCROLL_POSITION - (this.playerState.currentPositionY * CELL_SIZE);
+                            let max = windowHeight - ((GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25));
+                            if (y < max) y = max;
+                            this.gameContainer.y = y;
+                        }
+                        // プレーヤー描画
+                        this.setPlayer(this.$store.state.uid, this.playerState, null);
+                    }, 100)
+                }
+            },
             playerState(val, oldVal) {
                 if (!val || !val.displayPositionY || !val.displayPositionX) return;
                 // 画面スクロール
@@ -1204,6 +1211,9 @@
                             movingDirectionArr.push(DIRECTION_DOWN);
                         }
                     }
+                }
+                // ログイン時
+                else {
                 }
                 // 上
                 if (movingDirectionArr.indexOf(DIRECTION_UP) >= 0) {
@@ -1384,52 +1394,4 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    /*
-    .intro {
-        position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        width: 100%;
-        height: calc(100% - 200px);
-        background-color: rgba(0, 0, 0, 0.7);
-        opacity: 1;
-        &.hide {
-            opacity: 0;
-            transition-property: opacity;
-            transition-duration: 1s;
-        }
-        &__box {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            padding: 20px 30px;
-            transform: translate(-50%, -50%);
-            background-color: #000;
-        }
-        &__text {
-            font-size: 50px;
-            font-weight: 900;
-            line-height: 1em;
-            color: #fc0;
-            font-style: italic;
-            background: -webkit-linear-gradient(90deg, #f00, #fc0, #f00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    }
-    */
-    /*@media screen and (max-width: 896px) {*/
-    /*    .intro {*/
-    /*        height: calc(100% - 150px);*/
-    /*        &__box {*/
-    /*            padding: 20px;*/
-    /*            text-align: center;*/
-    /*        }*/
-    /*        &__text {*/
-    /*            font-size: 30px;*/
-    /*        }*/
-    /*    }*/
-    /*}*/
 </style>
