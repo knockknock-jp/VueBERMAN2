@@ -159,6 +159,21 @@
         },
         methods: {
 
+            // 方向設定（コントローラーから）
+            setDirection: function(direction) {
+                if (!this.playGame) return;
+                if (direction) {
+                    if (0 <= this.playerState.movingDirectionArr.join(',').indexOf(direction)) return;
+                    this.playerState.movingDirectionArr = this.playerState.movingDirectionArr.filter((item)=> {
+                        return item !== direction;
+                    });
+                    this.playerState.movingDirectionArr.push(direction);
+                    this.playerState.lastMovingDirection = direction;
+                } else {
+                    this.playerState.movingDirectionArr = [];
+                }
+            },
+
             // プレーヤー移動
             movePlayer: function() {
                 if (this.playerState.death) return;
@@ -431,6 +446,7 @@
 
             // 爆弾設置
             setBomb: function() {
+                if (!this.playGame) return;
                 // 爆弾設置数取得
                 const setBombCount = (()=> {
                     let count = 0;

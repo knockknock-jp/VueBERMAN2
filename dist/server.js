@@ -83,6 +83,26 @@ app.get('/assets/enemy3_sprite.png', (req, res)=> {
     res.sendFile(__dirname + '/assets/enemy3_sprite.png');
 });
 
+app.get('/assets/icon-up.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/icon-up.png');
+});
+
+app.get('/assets/icon-down.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/icon-down.png');
+});
+
+app.get('/assets/icon-left.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/icon-left.png');
+});
+
+app.get('/assets/icon-right.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/icon-right.png');
+});
+
+app.get('/assets/bomb.png', (req, res)=> {
+    res.sendFile(__dirname + '/assets/bomb.png');
+});
+
 /* ---------- 定数 ---------- */
 
 const BOMB_STANDBY_TIME = 3; // 爆弾待機時間
