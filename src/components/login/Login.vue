@@ -41,7 +41,7 @@
                     </dl>
                     <dl class="list-dl">
                         <dt>Name</dt>
-                        <dd><input class="common__input-text" type="text" maxlength="18" v-model="charaName" v-bind:class="charaName ? 'focus' : ''" ref="inputTextName" /></dd>
+                        <dd><input class="common__input-text" type="text" maxlength="10" v-model="charaName" v-bind:class="charaName ? 'focus' : ''" ref="inputTextName" placeholder="最大10文字" /></dd>
                     </dl>
                     <div class="box">
                         <input class="common__input-submit common__input-submit--large" type="submit" value="LOGIN" v-bind:disabled="!charaName || !charaType ? true : false" />
@@ -65,8 +65,8 @@
         data: function () {
             return {
                 charaType: CHARACTER_TYPES[0],
-                // charaName: 'test',
-                charaName: null,
+                charaName: 'test',
+                // charaName: null,
                 charaTypes: CHARACTER_TYPES,
             }
         },

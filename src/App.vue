@@ -74,6 +74,7 @@
         box-sizing: border-box;
         border: solid 1px #333;
         border-radius: 5px;
+        font-size: 16px;
         color: #fff;
         background-color: #000;
         &:focus {

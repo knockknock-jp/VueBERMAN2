@@ -10,7 +10,7 @@
                 </div>
                 <div class="box-comment">
                     <template v-if="isEditing">
-                        <textarea class="textarea" maxlength="40" cols="20" rows="3" v-model="inputMessage"></textarea>
+                        <textarea class="textarea" maxlength="20" cols="20" rows="2" v-model="inputMessage" placeholder="最大20文字"></textarea>
                     </template>
                     <template v-else>
                         <template v-if="comment">
@@ -188,13 +188,13 @@
             z-index: 1;
             display: block;
             font-size: 10px;
-            line-height: 1.5em;
+            line-height: 1.2em;
             word-break: break-all;
         }
         &:after {
             display: block;
             position: absolute;
-            top: 70%;
+            top: 50%;
             left: -15px;
             transform: translateY(-50%);
             content: '';
@@ -274,8 +274,8 @@
         padding: 5px;
         border: solid 1px #ccc;
         border-radius: 5px;
-        line-height: 1.5em;
-        font-size: 10px;
+        line-height: 1.2em;
+        font-size: 16px;
         resize: none;
         background-color: #fff;
         &:focus {
