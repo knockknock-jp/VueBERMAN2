@@ -65,8 +65,8 @@
         data: function () {
             return {
                 charaType: CHARACTER_TYPES[0],
-                charaName: 'test',
-                // charaName: null,
+                // charaName: 'test',
+                charaName: null,
                 charaTypes: CHARACTER_TYPES,
             }
         },

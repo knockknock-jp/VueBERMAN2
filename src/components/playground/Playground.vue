@@ -45,7 +45,7 @@
         ENEMY_TYPE_003,
     } from '../../const'
     import { TweenMax, Linear, Bounce } from 'gsap';
-    import {SEND_USER_STATE} from "../../mutation-types";
+    // import {SEND_USER_STATE} from "../../mutation-types";
 
     export default {
         name: 'Playground',

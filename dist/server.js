@@ -11,6 +11,10 @@ app.get('/main.js', (req, res)=> {
     res.sendFile(__dirname + '/main.js');
 });
 
+app.get('/main.min.js', (req, res)=> {
+    res.sendFile(__dirname + '/main.min.js');
+});
+
 app.get('/assets/field.json', (req, res)=> {
     res.sendFile(__dirname + '/assets/field.json');
 });
