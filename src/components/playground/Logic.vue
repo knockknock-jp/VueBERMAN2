@@ -40,7 +40,7 @@
         PLAYER_INITIAL_BOMB_POSSESSIONS,
         PLAYER_INITIAL_INVINCIBLY_TIME,
         GAME_MAP_COL,
-        GAME_MAP_ROW,
+        GAME_MAP_ROW, BOMB_COUNT_STANDBY,
     } from '../../const'
     import {
         SEND_USER_STATE,
@@ -451,16 +451,30 @@
                 const setBombCount = (()=> {
                     let count = 0;
                     let i, max;
-                    for (i = 0, max = this.map.length; i < max; i = i + 1) {
+                    for (i = 0, max = this.bombsMap.length; i < max; i = i + 1) {
                         let j, max2;
-                        for (j = 0, max2 = this.map[i].length; j < max2; j = j + 1) {
-                            if (this.map[i][j] === CELL_TYPE_BOMB) {
+                        for (j = 0, max2 = this.bombsMap[i].length; j < max2; j = j + 1) {
+                            if (this.bombsMap[i][j].count === BOMB_COUNT_STANDBY && this.bombsMap[i][j].uid === this.uid) {
                                 count += 1;
                             }
                         }
                     }
                     return count;
                 })();
+                // const setBombCount = (()=> {
+                //     let count = 0;
+                //     let i, max;
+                //     for (i = 0, max = this.map.length; i < max; i = i + 1) {
+                //         let j, max2;
+                //         for (j = 0, max2 = this.map[i].length; j < max2; j = j + 1) {
+                //             if (this.map[i][j] === CELL_TYPE_BOMB) {
+                //                 count += 1;
+                //             }
+                //         }
+                //     }
+                //     return count;
+                // })();
+
                 // セルの種類設定
                 if (setBombCount < this.playerState.bombPossessions) {
                     const currentCellType = this.getCellType(this.playerState.currentPositionY, this.playerState.currentPositionX);
@@ -551,6 +565,9 @@
             },
             map: function() {
                 return this.$store.state.map;
+            },
+            bombsMap: function() {
+                return this.$store.state.bombsMap;
             },
             users: function() {
                 return this.$store.state.users;

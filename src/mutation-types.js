@@ -26,3 +26,5 @@ export const SET_EXIT = 'set_exit';
 export const CHANGE_STAGE = 'change_stage';
 // ポイント設定
 export const SET_POINT = 'set_point';
+// 爆弾マップ設定
+export const SET_BOMBS_MAP = 'set_bombs_map';

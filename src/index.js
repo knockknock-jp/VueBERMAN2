@@ -20,6 +20,7 @@ import {
     CHANGE_STAGE,
     // START_STAGE,
     SET_POINT,
+    SET_BOMBS_MAP,
 } from './mutation-types';
 // import {
 //     GAME_MAP_COL,
@@ -62,6 +63,15 @@ Vue.use(Vuex);
         // ゲームマップ設定
         store.commit(SET_MAP, {
             map: map,
+        });
+    });
+
+    // ゲームマップ情報
+    socket.on('bombsMap', (bombsMap)=>{
+        // console.log('socket: bombsMap', bombsMap);
+        // 爆弾マップ設定
+        store.commit(SET_BOMBS_MAP, {
+            bombsMap: bombsMap,
         });
     });
 
@@ -122,6 +132,7 @@ Vue.use(Vuex);
             exit: null,
             stage: 0,
             points: [],
+            bombsMap: null,
             // playLog: [{
             //     uid: 'uid',
             //     date: '2020/01/01',
@@ -140,6 +151,12 @@ Vue.use(Vuex);
             [SET_MAP] (state, payload) {
                 // console.log(SET_MAP, state, payload);
                 state.map = payload.map;
+            },
+
+            // 爆弾マップ設定
+            [SET_BOMBS_MAP] (state, payload) {
+                // console.log(SET_BOMBS_MAP, state, payload);
+                state.bombsMap = payload.bombsMap;
             },
 
             // 敵設定

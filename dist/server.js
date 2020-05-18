@@ -267,6 +267,9 @@ setInterval(()=> {
     // 敵更新
     io.emit('enemies', enemies);
 
+    // 爆弾マップ更新
+    io.emit('bombsMap', bombsMap);
+
     // 敵が0になったら扉を出現
     if (enemies.length <= 0) {
         if (!exit) {

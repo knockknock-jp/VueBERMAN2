@@ -62,4 +62,5 @@ export const FIELD_SCROLL_POSITION = 200; // フィールドをスクロール�
 export const ENEMY_TYPE_001 = 0; // 敵
 export const ENEMY_TYPE_002 = 1; // 敵
 export const ENEMY_TYPE_003 = 2; // 敵
+export const BOMB_COUNT_STANDBY = 1; // 爆弾スタンバイ
 
