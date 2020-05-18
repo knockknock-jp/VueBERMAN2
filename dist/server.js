@@ -155,7 +155,7 @@ const ITEM_TYPES = [
     CELL_TYPE_ITEM_MOVE_SPEED,
     CELL_TYPE_ITEM_BOMB_POSSESSIONS,
 ];
-const ITEM_APPEARANCE_PROBABILITY = 0.3; // アイテム出現率
+const ITEM_APPEARANCE_PROBABILITY = 0.1; // アイテム出現率
 // const ENEMY_APPEARANCE_PROBABILITY = 0.05; // 敵出現率
 // const BLOCK_APPEARANCE_PROBABILITY = 0.2; // 壊せる壁出現率
 // const GAME_MAP_ROW = 11; // 行
@@ -949,8 +949,8 @@ function setStage(nextStage) {
                 } else {
 
                     // デバッグ用
-                    // if (false) {
-                    if (true) {
+                    if (false) {
+                    // if (true) {
                         if (Math.random() <= 0.01) {
                             // arr2.push(CELL_TYPE_FREE);
                             arr2.push(CELL_TYPE_BLOCK);
@@ -1052,8 +1052,8 @@ function setStage(nextStage) {
                 if (map[i][j] === CELL_TYPE_FREE) {
 
                     // デバッグ用
-                    // if (false) {
-                    if (true) {
+                    if (false) {
+                    // if (true) {
                         if (Math.random() <= 0.001) {
                             arr.push({
                                 eid: Math.random().toString(36).slice(-8),
