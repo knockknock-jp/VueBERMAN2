@@ -718,8 +718,12 @@
                     }
                 }
                 if (!sprite || !container) return;
-                //
-                container.position.set(state.displayPositionX * CELL_SIZE, state.displayPositionY * CELL_SIZE);
+                TweenMax.to(container.position, 0.1, {
+                    y: state.displayPositionY * CELL_SIZE,
+                    x: state.displayPositionX * CELL_SIZE,
+                    ease: Linear.easeNone,
+                });
+                // container.position.set(state.displayPositionX * CELL_SIZE, state.displayPositionY * CELL_SIZE);
                 container.zIndex = state.currentPositionY;
                 // container.zIndex = Math.floor(state.displayPositionY * CELL_SIZE);
                 // 死亡状態

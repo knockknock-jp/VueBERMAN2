@@ -35,13 +35,16 @@ export const CELL_TYPE_ITEM_MOVE_SPEED = 22; // アイテム（移動速度）
 // export const PLAYER_INITIAL_MOVE_SPEED = 0.3;
 // export const PLAYER_INITIAL_EXPLOSION_POWER = 10;
 // export const PLAYER_INITIAL_BOMB_POSSESSIONS = 10;
-export const PLAYER_INITIAL_MOVE_SPEED = 0.1;
+export const PLAYER_INITIAL_MOVE_SPEED = 0.3;
 export const PLAYER_INITIAL_EXPLOSION_POWER = 1;
 export const PLAYER_INITIAL_BOMB_POSSESSIONS = 1;
+// export const PLAYER_INITIAL_MOVE_SPEED = 0.1;
+// export const PLAYER_INITIAL_EXPLOSION_POWER = 1;
+// export const PLAYER_INITIAL_BOMB_POSSESSIONS = 1;
 export const PLAYER_INITIAL_INVINCIBLY_TIME = 5000; // 初期化時無敵時間
 // アイテム情報
 export const ITEM_EXPLOSION_POWER_STEP_UP_POINT =  1; // アイテム（火力）の上昇数
-export const ITEM_MOVE_SPEED_STEP_UP_POINT = 0.025; // アイテム（移動速度）の上昇数
+export const ITEM_MOVE_SPEED_STEP_UP_POINT = 0.05; // アイテム（移動速度）の上昇数
 export const ITEM_BOMB_POSSESSIONS_STEP_UP_POINT = 1; // アイテム（爆弾所有数）の上昇数
 // 向き
 export const DIRECTION_UP = 'up';

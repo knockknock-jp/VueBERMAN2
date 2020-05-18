@@ -71,7 +71,7 @@
                 if (!this.map || !this.uid) return;
                 // プレーヤー移動
                 this.movePlayer();
-            }, 1000 / 30);
+            }, 1000 / 10);
 
         },
         beforeMount() {
