@@ -7,6 +7,10 @@ app.get('/', (req, res)=> {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/og-image.png', (req, res)=> {
+    res.sendFile(__dirname + '/og-image.png');
+});
+
 app.get('/main.js', (req, res)=> {
     res.sendFile(__dirname + '/main.js');
 });
@@ -199,8 +203,10 @@ let playLog = [{
     message: 'サーバが再起動されました。',
     type: PLAY_LOG_TYPE_ATTENTION,
 }];
-// ステージレベル（0-3）
+// ステージレベル（0-2）
 let stage = 0;
+// let stage = 1;
+// let stage = 2;
 // 出口
 let exit = null;
 // ポイント
@@ -1003,7 +1009,7 @@ function setStage(nextStage) {
                                 }
                                 break;
                             case STAGE_02:
-                                if (Math.random() <= 0.3) {
+                                if (Math.random() <= 0.25) {
                                     // ブロック
                                     arr2.push(CELL_TYPE_BLOCK);
                                 } else {
@@ -1012,7 +1018,7 @@ function setStage(nextStage) {
                                 }
                                 break;
                             case STAGE_03:
-                                if (Math.random() <= 0.4) {
+                                if (Math.random() <= 0.3) {
                                     // ブロック
                                     arr2.push(CELL_TYPE_BLOCK);
                                 } else {
@@ -1113,7 +1119,7 @@ function setStage(nextStage) {
                             break;
                         case STAGE_02:
                             // if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
-                            if (Math.random() <= 0.1) {
+                            if (Math.random() <= 0.05) {
                                 if (0.7 <= Math.random()) {
                                     arr.push({
                                         eid: Math.random().toString(36).slice(-8),
@@ -1139,7 +1145,7 @@ function setStage(nextStage) {
                             break;
                         case STAGE_03:
                             // if (Math.random() <= ENEMY_APPEARANCE_PROBABILITY) {
-                            if (Math.random() <= 0.2) {
+                            if (Math.random() <= 0.05) {
                                 if (0.8 <= Math.random()) {
                                     arr.push({
                                         eid: Math.random().toString(36).slice(-8),

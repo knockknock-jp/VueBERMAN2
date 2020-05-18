@@ -209,7 +209,9 @@
                 // プレーヤー移動方向がUPの時
                 if (this.movingDirection() === DIRECTION_UP) {
                     // 移動距離を足した後の次の表示位置
-                    const nextDisplayPositionY = this.playerState.displayPositionY - this.playerState.moveSpeed;
+                    let moveSpeed = (MAX_MOVE_SPEED < this.playerState.moveSpeed)  ? MAX_MOVE_SPEED : this.playerState.moveSpeed;
+                    const nextDisplayPositionY = this.playerState.displayPositionY - moveSpeed;
+                    // const nextDisplayPositionY = this.playerState.displayPositionY - this.playerState.moveSpeed;
                     // 移動距離を足した後の次の立ち位置
                     const nextPositionY = Math.round(nextDisplayPositionY);
                     // 「移動距離を足した後の次の立ち位置」が移動可能なセルだった場合
@@ -231,7 +233,9 @@
                 // プレーヤー移動方向がDOWNの時
                 else if (this.movingDirection() === DIRECTION_DOWN) {
                     // 移動距離を足した後の次の表示位置
-                    const nextDisplayPositionY = this.playerState.displayPositionY + this.playerState.moveSpeed;
+                    let moveSpeed = (MAX_MOVE_SPEED < this.playerState.moveSpeed)  ? MAX_MOVE_SPEED : this.playerState.moveSpeed;
+                    const nextDisplayPositionY = this.playerState.displayPositionY + moveSpeed;
+                    // const nextDisplayPositionY = this.playerState.displayPositionY + this.playerState.moveSpeed;
                     // 移動距離を足した後の次の立ち位置
                     const nextPositionY = Math.round(nextDisplayPositionY);
                     // 「移動距離を足した後の次の立ち位置」が移動可能なセルだった場合
@@ -253,7 +257,9 @@
                 // プレーヤー移動方向がLEFTの時
                 else if (this.movingDirection() === DIRECTION_LEFT) {
                     // 移動距離を足した後の次の表示位置
-                    const nextDisplayPositionX = this.playerState.displayPositionX - this.playerState.moveSpeed;
+                    let moveSpeed = (MAX_MOVE_SPEED < this.playerState.moveSpeed)  ? MAX_MOVE_SPEED : this.playerState.moveSpeed;
+                    const nextDisplayPositionX = this.playerState.displayPositionX - moveSpeed;
+                    // const nextDisplayPositionX = this.playerState.displayPositionX - this.playerState.moveSpeed;
                     // 移動距離を足した後の次の立ち位置
                     const nextPositionX = Math.round(nextDisplayPositionX);
                     // 「移動距離を足した後の次の立ち位置」が移動可能なセルだった場合
@@ -275,7 +281,9 @@
                 // プレーヤー移動方向がRIGHTの時
                 else if (this.movingDirection() === DIRECTION_RIGHT) {
                     // 移動距離を足した後の次の表示位置
-                    const nextDisplayPositionX = this.playerState.displayPositionX + this.playerState.moveSpeed;
+                    let moveSpeed = (MAX_MOVE_SPEED < this.playerState.moveSpeed)  ? MAX_MOVE_SPEED : this.playerState.moveSpeed;
+                    const nextDisplayPositionX = this.playerState.displayPositionX + moveSpeed;
+                    // const nextDisplayPositionX = this.playerState.displayPositionX + this.playerState.moveSpeed;
                     // 移動距離を足した後の次の立ち位置
                     const nextPositionX = Math.round(nextDisplayPositionX);
                     // 「移動距離を足した後の次の立ち位置」が移動可能なセルだった場合
@@ -319,11 +327,12 @@
                         // console.log('移動速度アップ');
                         // 移動速度アップ
                         const speed = this.playerState.moveSpeed + ITEM_MOVE_SPEED_STEP_UP_POINT;
-                        if (MAX_MOVE_SPEED < speed) {
-                            this.playerState.moveSpeed = MAX_MOVE_SPEED;
-                        } else {
-                            this.playerState.moveSpeed = speed;
-                        }
+                        this.playerState.moveSpeed = speed;
+                        // if (MAX_MOVE_SPEED < speed) {
+                        //     this.playerState.moveSpeed = MAX_MOVE_SPEED;
+                        // } else {
+                        //     this.playerState.moveSpeed = speed;
+                        // }
                         // セルの種類設定（通路）
                         this.setCellType(currentPositionY, currentPositionX, CELL_TYPE_FREE);
                     } else if (currentCellType === CELL_TYPE_ITEM_EXPLOSION_POWER) {
@@ -461,8 +470,6 @@
                             }
                         }
                     }
-                    console.log(this.bombsMap);
-                    console.log(this.uid);
                     return count;
                 })();
                 // const setBombCount = (()=> {

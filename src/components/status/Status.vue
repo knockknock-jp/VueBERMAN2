@@ -10,7 +10,7 @@
                 </div>
                 <div class="box-comment">
                     <template v-if="isEditing">
-                        <textarea class="textarea" maxlength="20" cols="20" rows="2" v-model="inputMessage" placeholder="最大20文字"></textarea>
+                        <textarea class="textarea" maxlength="20" cols="20" rows="2" v-model="inputMessage" placeholder=""></textarea>
                     </template>
                     <template v-else>
                         <template v-if="comment">
