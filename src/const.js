@@ -35,7 +35,7 @@ export const CELL_TYPE_ITEM_MOVE_SPEED = 22; // アイテム（移動速度）
 // export const PLAYER_INITIAL_MOVE_SPEED = 0.3;
 // export const PLAYER_INITIAL_EXPLOSION_POWER = 10;
 // export const PLAYER_INITIAL_BOMB_POSSESSIONS = 10;
-export const PLAYER_INITIAL_MOVE_SPEED = 0.3;
+export const PLAYER_INITIAL_MOVE_SPEED = 0.2;
 export const PLAYER_INITIAL_EXPLOSION_POWER = 1;
 export const PLAYER_INITIAL_BOMB_POSSESSIONS = 1;
 // export const PLAYER_INITIAL_MOVE_SPEED = 0.1;
@@ -66,4 +66,4 @@ export const ENEMY_TYPE_001 = 0; // 敵
 export const ENEMY_TYPE_002 = 1; // 敵
 export const ENEMY_TYPE_003 = 2; // 敵
 export const BOMB_COUNT_STANDBY = 1; // 爆弾スタンバイ
-
+export const BOMB_COUNT_PROPAGATION = 2; // 爆発伝播（一回だけ実行）

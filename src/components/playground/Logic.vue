@@ -40,7 +40,9 @@
         PLAYER_INITIAL_BOMB_POSSESSIONS,
         PLAYER_INITIAL_INVINCIBLY_TIME,
         GAME_MAP_COL,
-        GAME_MAP_ROW, BOMB_COUNT_STANDBY,
+        GAME_MAP_ROW,
+        BOMB_COUNT_STANDBY,
+        BOMB_COUNT_PROPAGATION,
     } from '../../const'
     import {
         SEND_USER_STATE,
@@ -386,7 +388,7 @@
                         }
                         count += 1;
                     }
-                }, 2000);
+                }, 3000);
 
                 // プレーヤー初期化
                 setTimeout(()=> {
@@ -454,11 +456,13 @@
                     for (i = 0, max = this.bombsMap.length; i < max; i = i + 1) {
                         let j, max2;
                         for (j = 0, max2 = this.bombsMap[i].length; j < max2; j = j + 1) {
-                            if (this.bombsMap[i][j].count === BOMB_COUNT_STANDBY && this.bombsMap[i][j].uid === this.uid) {
+                            if (BOMB_COUNT_STANDBY <= this.bombsMap[i][j].count && this.bombsMap[i][j].count < BOMB_COUNT_PROPAGATION && this.bombsMap[i][j].uid === this.uid) {
                                 count += 1;
                             }
                         }
                     }
+                    console.log(this.bombsMap);
+                    console.log(this.uid);
                     return count;
                 })();
                 // const setBombCount = (()=> {

@@ -1223,12 +1223,15 @@
                 // ログイン時
                 else {
                 }
+                let targetY = this.gameContainer.y;
+                let targetX = this.gameContainer.x;
                 // 上
                 if (movingDirectionArr.indexOf(DIRECTION_UP) >= 0) {
                     if (positionY + this.gameContainer.y < FIELD_SCROLL_POSITION - CELL_SIZE) {
                         let y = (FIELD_SCROLL_POSITION - CELL_SIZE) - positionY;
                         if (0 < y) y = 0;
-                        this.gameContainer.y = y;
+                        // this.gameContainer.y = y;
+                        targetY = y;
                     }
                 }
                 // 下
@@ -1237,7 +1240,8 @@
                         let y = windowHeight - FIELD_SCROLL_POSITION - positionY;
                         let max = windowHeight - ((GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25));
                         if (y < max) y = max;
-                        this.gameContainer.y = y;
+                        // this.gameContainer.y = y;
+                        targetY = y;
                     }
                 }
                 // 左
@@ -1245,7 +1249,8 @@
                     if (positionX + this.gameContainer.x < FIELD_SCROLL_POSITION - CELL_SIZE) {
                         let x = (FIELD_SCROLL_POSITION - CELL_SIZE) - positionX;
                         if (0 < x) x = 0;
-                        this.gameContainer.x = x;
+                        // this.gameContainer.x = x;
+                        targetX = x;
                     }
                 }
                 // 右
@@ -1254,9 +1259,15 @@
                         let x = windowWidth - FIELD_SCROLL_POSITION - positionX;
                         let max = windowWidth - (GAME_MAP_ROW * CELL_SIZE);
                         if (x < max) x = max;
-                        this.gameContainer.x = x;
+                        // this.gameContainer.x = x;
+                        targetX = x;
                     }
                 }
+                TweenMax.to(this.gameContainer, 0.1, {
+                    y: targetY,
+                    x: targetX,
+                    ease: Linear.easeNone,
+                });
             },
             map(val) {
                 // console.log('map変更', val);
