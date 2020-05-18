@@ -1161,27 +1161,31 @@
                     setTimeout(()=> {
                         const windowHeight = window.innerHeight - this.footerHeight;
                         const windowWidth = window.innerWidth;
-                        // 左
-                        if (this.playerState.currentPositionX < GAME_MAP_COL / 2) {
-                            this.gameContainer.x = 0;
+                        if (windowWidth < GAME_MAP_COL * CELL_SIZE) {
+                            // 左
+                            if (this.playerState.currentPositionX < GAME_MAP_COL / 2) {
+                                this.gameContainer.x = 0;
+                            }
+                            // 右
+                            else {
+                                let x = windowWidth - FIELD_SCROLL_POSITION - (this.playerState.currentPositionX * CELL_SIZE);
+                                let max = windowWidth - (GAME_MAP_ROW * CELL_SIZE);
+                                if (x < max) x = max;
+                                this.gameContainer.x = x;
+                            }
                         }
-                        // 右
-                        else {
-                            let x = windowWidth - FIELD_SCROLL_POSITION - (this.playerState.currentPositionX * CELL_SIZE);
-                            let max = windowWidth - (GAME_MAP_ROW * CELL_SIZE);
-                            if (x < max) x = max;
-                            this.gameContainer.x = x;
-                        }
-                        // 上
-                        if (this.playerState.currentPositionY < GAME_MAP_ROW / 2) {
-                            this.gameContainer.y = 0;
-                        }
-                        // 下
-                        else {
-                            let y = windowHeight - FIELD_SCROLL_POSITION - (this.playerState.currentPositionY * CELL_SIZE);
-                            let max = windowHeight - ((GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25));
-                            if (y < max) y = max;
-                            this.gameContainer.y = y;
+                        if (windowHeight  <GAME_MAP_ROW * CELL_SIZE) {
+                            // 上
+                            if (this.playerState.currentPositionY < GAME_MAP_ROW / 2) {
+                                this.gameContainer.y = 0;
+                            }
+                            // 下
+                            else {
+                                let y = windowHeight - FIELD_SCROLL_POSITION - (this.playerState.currentPositionY * CELL_SIZE);
+                                let max = windowHeight - ((GAME_MAP_ROW * CELL_SIZE) + (CELL_SIZE * 0.25));
+                                if (y < max) y = max;
+                                this.gameContainer.y = y;
+                            }
                         }
                         // プレーヤー描画
                         this.setPlayer(this.$store.state.uid, this.playerState, null);
