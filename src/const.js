@@ -55,8 +55,8 @@ export const PLAY_LOG_TYPE_ATTENTION = 2; // 注意
 // その他
 // export const GAME_MAP_ROW = 11; // 行
 // export const GAME_MAP_COL = 11; // 列
-export const GAME_MAP_ROW = 51; // 行
-export const GAME_MAP_COL = 51; // 列
+export const GAME_MAP_ROW = 35; // 行
+export const GAME_MAP_COL = 35; // 列
 export const MAX_MOVE_SPEED = 1; // 最大移動スピード
 export const FIELD_SCROLL_POSITION = 200; // フィールドをスクロール位置
 export const ENEMY_TYPE_001 = 0; // 敵

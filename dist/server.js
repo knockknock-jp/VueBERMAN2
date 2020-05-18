@@ -164,8 +164,8 @@ const ITEM_APPEARANCE_PROBABILITY = 0.1; // アイテム出現率
 // const BLOCK_APPEARANCE_PROBABILITY = 0.2; // 壊せる壁出現率
 // const GAME_MAP_ROW = 11; // 行
 // const GAME_MAP_COL = 11 ; // 列
-const GAME_MAP_ROW = 51; // 行
-const GAME_MAP_COL = 51; // 列
+const GAME_MAP_ROW = 35; // 行
+const GAME_MAP_COL = 35; // 列
 // プレイログタイプ
 const PLAY_LOG_TYPE_NORMAL = 0; // 通常
 const PLAY_LOG_TYPE_EMPHASIS = 1; // 強調
