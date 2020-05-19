@@ -81,6 +81,10 @@
             this.enemy2Text = null;
             this.enemy3Text = null;
 
+            // this.enemyTextures = null;
+            // this.enemy2Textures = null;
+            // this.enemy3Textures = null;
+
             /*
             app -> container -> gameContainer（プレーヤーに合わせた画面スクロール） -> mapContainer -> enemy, map, user, exit
                   -> headerContainer                                                                           -> ground
@@ -300,189 +304,282 @@
             loadMap: function() {
                 this.mapSprite = [];
                 return new Promise((resolve)=> {
-                    const loader = new PIXI.Loader();
-                    loader.add('sprite', './assets/field.json').once('complete', ()=>{
-                        const textures = [];
+                    const textures = (()=> {
                         let i, max;
-                        for (i = 0, max = 22; i <= max; i = i + 1) {
-                            textures.push(PIXI.Texture.from(`cell-type-${i}`));
-                        }
-                        textures.push(PIXI.Texture.from(`cell-type-4-1`)); // 爆弾アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-4-2`)); // 爆弾アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-4-3`)); // 爆弾アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-3-1`)); // ブロック爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-3-2`)); // ブロック爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-3-3`)); // ブロック爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-5-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-5-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-6-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-6-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-7-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-7-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-8-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-8-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-9-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-9-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-10-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-10-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-11-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-11-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-12-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-12-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-13-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-13-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-14-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-14-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-15-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-15-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-16-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-16-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-17-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-17-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-18-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-18-2`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-19-1`)); // 爆破アニメーション
-                        textures.push(PIXI.Texture.from(`cell-type-19-2`)); // 爆破アニメーション
-                        for (i = 0, max = GAME_MAP_ROW; i < max; i = i + 1) {
-                            let arr = [];
-                            let j, max2;
-                            for (j = 0, max2 = GAME_MAP_COL; j < max2; j = j + 1) {
-                                const animatedSprite = new PIXI.AnimatedSprite(textures);
-                                animatedSprite.position.set(j * CELL_SIZE, i * CELL_SIZE);
-                                animatedSprite.width = CELL_SIZE;
-                                animatedSprite.height = CELL_SIZE + (CELL_SIZE * 0.25);
-                                // animatedSprite.zIndex = i * CELL_SIZE;
-                                this.mapContainer.addChild(animatedSprite);
-                                // this.app.stage.addChild(animatedSprite);
-                                animatedSprite.gotoAndStop(1);
-                                arr.push(animatedSprite);
+                        for (i = 0, max = window.textures.length; i < max; i = i + 1) {
+                            if ('field' === window.textures[i].type) {
+                                return window.textures[i].textures;
                             }
-                            this.mapSprite.push(arr);
                         }
-                        resolve();
-                    });
-                    loader.load();
+                    })();
+                    let i, max;
+                    for (i = 0, max = GAME_MAP_ROW; i < max; i = i + 1) {
+                        let arr = [];
+                        let j, max2;
+                        for (j = 0, max2 = GAME_MAP_COL; j < max2; j = j + 1) {
+                            const animatedSprite = new PIXI.AnimatedSprite(textures);
+                            animatedSprite.position.set(j * CELL_SIZE, i * CELL_SIZE);
+                            animatedSprite.width = CELL_SIZE;
+                            animatedSprite.height = CELL_SIZE + (CELL_SIZE * 0.25);
+                            // animatedSprite.zIndex = i * CELL_SIZE;
+                            this.mapContainer.addChild(animatedSprite);
+                            // this.app.stage.addChild(animatedSprite);
+                            animatedSprite.gotoAndStop(1);
+                            arr.push(animatedSprite);
+                        }
+                        this.mapSprite.push(arr);
+                    }
+                    resolve();
+                    // const loader = new PIXI.Loader();
+                    // loader.add('sprite', './assets/field.json').once('complete', ()=>{
+                    //     const textures = [];
+                    //     let i, max;
+                    //     for (i = 0, max = 22; i <= max; i = i + 1) {
+                    //         textures.push(PIXI.Texture.from(`cell-type-${i}`));
+                    //     }
+                    //     textures.push(PIXI.Texture.from(`cell-type-4-1`)); // 爆弾アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-4-2`)); // 爆弾アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-4-3`)); // 爆弾アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-3-1`)); // ブロック爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-3-2`)); // ブロック爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-3-3`)); // ブロック爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-5-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-5-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-6-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-6-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-7-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-7-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-8-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-8-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-9-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-9-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-10-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-10-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-11-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-11-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-12-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-12-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-13-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-13-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-14-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-14-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-15-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-15-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-16-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-16-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-17-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-17-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-18-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-18-2`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-19-1`)); // 爆破アニメーション
+                    //     textures.push(PIXI.Texture.from(`cell-type-19-2`)); // 爆破アニメーション
+                    //     for (i = 0, max = GAME_MAP_ROW; i < max; i = i + 1) {
+                    //         let arr = [];
+                    //         let j, max2;
+                    //         for (j = 0, max2 = GAME_MAP_COL; j < max2; j = j + 1) {
+                    //             const animatedSprite = new PIXI.AnimatedSprite(textures);
+                    //             animatedSprite.position.set(j * CELL_SIZE, i * CELL_SIZE);
+                    //             animatedSprite.width = CELL_SIZE;
+                    //             animatedSprite.height = CELL_SIZE + (CELL_SIZE * 0.25);
+                    //             // animatedSprite.zIndex = i * CELL_SIZE;
+                    //             this.mapContainer.addChild(animatedSprite);
+                    //             // this.app.stage.addChild(animatedSprite);
+                    //             animatedSprite.gotoAndStop(1);
+                    //             arr.push(animatedSprite);
+                    //         }
+                    //         this.mapSprite.push(arr);
+                    //     }
+                    //     resolve();
+                    // });
+                    // loader.load();
                 });
             },
 
             // プレーヤー読み込み
             loadPlayer: function(uid, type, name) {
                 return new Promise((resolve)=> {
-                    let json = './assets/player000.json';
-                    switch(type) {
-                        case CHARACTER_TYPE_000:
-                            json = './assets/player000.json'
-                            break;
-                        case CHARACTER_TYPE_001:
-                            json = './assets/player001.json'
-                            break;
-                        case CHARACTER_TYPE_002:
-                            json = './assets/player002.json'
-                            break;
-                    }
-                    const loader = new PIXI.Loader();
-                    loader.add('sprite', json).once('complete', ()=>{
-                        // スプライト
-                        const textures = [];
+                    const textures = ((type)=> {
                         let i, max;
-                        for (i = 0, max = 3; i <= max; i = i + 1) {
-                            textures.push(PIXI.Texture.from(`player-down-${i}`));
+                        for (i = 0, max = window.textures.length; i < max; i = i + 1) {
+                            if (type === window.textures[i].type) {
+                                return window.textures[i].textures;
+                            }
                         }
-                        for (i = 0, max = 3; i <= max; i = i + 1) {
-                            textures.push(PIXI.Texture.from(`player-up-${i}`));
-                        }
-                        for (i = 0, max = 3; i <= max; i = i + 1) {
-                            textures.push(PIXI.Texture.from(`player-left-${i}`));
-                        }
-                        for (i = 0, max = 3; i <= max; i = i + 1) {
-                            textures.push(PIXI.Texture.from(`player-right-${i}`));
-                        }
-                        textures.push(PIXI.Texture.from(`player-death`));
-                        const sprite = new PIXI.AnimatedSprite(textures);
-                        sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.5);
-                        // sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.3);
-                        sprite.width = CELL_SIZE * 1.5;
-                        sprite.height = CELL_SIZE * 1.5;
-                        sprite.gotoAndStop(0);
-                        // 名前
-                        const text = new PIXI.Text(name, new PIXI.TextStyle({
-                            fontSize: 12,
-                            lineHeight: 12,
-                            fontWeight: 'bold',
-                            fill: this.$store.state.uid === uid ? '#ff6600' : '#ffffff',
-                            stroke: '#000',
-                            strokeThickness: 2,
-                            align: 'center',
-                            breakWords: true,
-                            wordWrap: true,
-                            wordWrapWidth: CELL_SIZE * 2,
-                        }));
-                        text.x = (CELL_SIZE / 2) - (text.width / 2);
-                        text.y = CELL_SIZE;
-                        // text.y = -(CELL_SIZE / 2) - text.height + 5;
-                        // コンテナ
-                        const container = new PIXI.Container();
-                        container.addChild(sprite);
-                        container.addChild(text);
-                        this.mapContainer.addChild(container);
-                        //
-                        this.usersSprite.push({
-                            uid: uid,
-                            container: container,
-                            sprite: sprite,
-                            message: null,
-                            commentContainer: null,
-                        });
-                        resolve();
+                    })(type);
+                    const sprite = new PIXI.AnimatedSprite(textures);
+                    sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.5);
+                    // sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.3);
+                    sprite.width = CELL_SIZE * 1.5;
+                    sprite.height = CELL_SIZE * 1.5;
+                    sprite.gotoAndStop(0);
+                    // 名前
+                    const text = new PIXI.Text(name, new PIXI.TextStyle({
+                        fontSize: 12,
+                        lineHeight: 12,
+                        fontWeight: 'bold',
+                        fill: this.$store.state.uid === uid ? '#ff6600' : '#ffffff',
+                        stroke: '#000',
+                        strokeThickness: 2,
+                        align: 'center',
+                        breakWords: true,
+                        wordWrap: true,
+                        wordWrapWidth: CELL_SIZE * 2,
+                    }));
+                    text.x = (CELL_SIZE / 2) - (text.width / 2);
+                    text.y = CELL_SIZE;
+                    // text.y = -(CELL_SIZE / 2) - text.height + 5;
+                    // コンテナ
+                    const container = new PIXI.Container();
+                    container.addChild(sprite);
+                    container.addChild(text);
+                    this.mapContainer.addChild(container);
+                    //
+                    this.usersSprite.push({
+                        uid: uid,
+                        container: container,
+                        sprite: sprite,
+                        message: null,
+                        commentContainer: null,
                     });
-                    loader.load();
+                    resolve();
+                    // let json = './assets/player000.json';
+                    // switch(type) {
+                    //     case CHARACTER_TYPE_000:
+                    //         json = './assets/player000.json'
+                    //         break;
+                    //     case CHARACTER_TYPE_001:
+                    //         json = './assets/player001.json'
+                    //         break;
+                    //     case CHARACTER_TYPE_002:
+                    //         json = './assets/player002.json'
+                    //         break;
+                    // }
+                    // const loader = new PIXI.Loader();
+                    // loader.add('sprite', json).once('complete', ()=>{
+                    //     // スプライト
+                    //     const textures = [];
+                    //     let i, max;
+                    //     for (i = 0, max = 3; i <= max; i = i + 1) {
+                    //         textures.push(PIXI.Texture.from(`player-down-${i}`));
+                    //     }
+                    //     for (i = 0, max = 3; i <= max; i = i + 1) {
+                    //         textures.push(PIXI.Texture.from(`player-up-${i}`));
+                    //     }
+                    //     for (i = 0, max = 3; i <= max; i = i + 1) {
+                    //         textures.push(PIXI.Texture.from(`player-left-${i}`));
+                    //     }
+                    //     for (i = 0, max = 3; i <= max; i = i + 1) {
+                    //         textures.push(PIXI.Texture.from(`player-right-${i}`));
+                    //     }
+                    //     textures.push(PIXI.Texture.from(`player-death`));
+                    //     const sprite = new PIXI.AnimatedSprite(textures);
+                    //     sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.5);
+                    //     // sprite.position.set(-CELL_SIZE * 0.25, -CELL_SIZE * 0.3);
+                    //     sprite.width = CELL_SIZE * 1.5;
+                    //     sprite.height = CELL_SIZE * 1.5;
+                    //     sprite.gotoAndStop(0);
+                    //     // 名前
+                    //     const text = new PIXI.Text(name, new PIXI.TextStyle({
+                    //         fontSize: 12,
+                    //         lineHeight: 12,
+                    //         fontWeight: 'bold',
+                    //         fill: this.$store.state.uid === uid ? '#ff6600' : '#ffffff',
+                    //         stroke: '#000',
+                    //         strokeThickness: 2,
+                    //         align: 'center',
+                    //         breakWords: true,
+                    //         wordWrap: true,
+                    //         wordWrapWidth: CELL_SIZE * 2,
+                    //     }));
+                    //     text.x = (CELL_SIZE / 2) - (text.width / 2);
+                    //     text.y = CELL_SIZE;
+                    //     // text.y = -(CELL_SIZE / 2) - text.height + 5;
+                    //     // コンテナ
+                    //     const container = new PIXI.Container();
+                    //     container.addChild(sprite);
+                    //     container.addChild(text);
+                    //     this.mapContainer.addChild(container);
+                    //     //
+                    //     this.usersSprite.push({
+                    //         uid: uid,
+                    //         container: container,
+                    //         sprite: sprite,
+                    //         message: null,
+                    //         commentContainer: null,
+                    //     });
+                    //     resolve();
+                    // });
+                    // loader.load();
                 });
             },
 
             // 敵読み込み
             loadEnemy: function(eid, type) {
                 return new Promise((resolve)=> {
-                    let json = './assets/enemy.json';
-                    switch(type) {
-                        case ENEMY_TYPE_001:
-                            json = './assets/enemy.json'
-                            break;
-                        case ENEMY_TYPE_002:
-                            json = './assets/enemy2.json'
-                            break;
-                        case ENEMY_TYPE_003:
-                            json = './assets/enemy3.json'
-                            break;
-                    }
-                    const loader = new PIXI.Loader();
-                    loader.add('sprite', json).once('complete', ()=>{
-                        // スプライト
-                        const textures = [];
-                        textures.push(PIXI.Texture.from('enemy-left-0'));
-                        textures.push(PIXI.Texture.from('enemy-left-1'));
-                        textures.push(PIXI.Texture.from('enemy-left-2'));
-                        textures.push(PIXI.Texture.from('enemy-left-3'));
-                        textures.push(PIXI.Texture.from('enemy-right-0'));
-                        textures.push(PIXI.Texture.from('enemy-right-1'));
-                        textures.push(PIXI.Texture.from('enemy-right-2'));
-                        textures.push(PIXI.Texture.from('enemy-right-3'));
-                        textures.push(PIXI.Texture.from('enemy-death'));
-                        const sprite = new PIXI.AnimatedSprite(textures);
-                        sprite.position.set(0, 0);
-                        sprite.width = CELL_SIZE;
-                        sprite.height = CELL_SIZE ;
-                        sprite.gotoAndStop(0);
-                        this.mapContainer.addChild(sprite);
-                        //
-                        this.enemiesSprite.push({
-                            eid: eid,
-                            sprite: sprite,
-                            currentPositionY: null,
-                            currentPositionX: null,
-                        });
-                        resolve();
+                    const textures = ((type)=> {
+                        let i, max;
+                        for (i = 0, max = window.textures.length; i < max; i = i + 1) {
+                            if (type === window.textures[i].type) {
+                                return window.textures[i].textures;
+                            }
+                        }
+                    })(type);
+                    const sprite = new PIXI.AnimatedSprite(textures);
+                    sprite.position.set(0, 0);
+                    sprite.width = CELL_SIZE;
+                    sprite.height = CELL_SIZE ;
+                    sprite.gotoAndStop(0);
+                    this.mapContainer.addChild(sprite);
+                    //
+                    this.enemiesSprite.push({
+                        eid: eid,
+                        sprite: sprite,
+                        currentPositionY: null,
+                        currentPositionX: null,
                     });
-                    loader.load();
+                    resolve();
+                    // let json = './assets/enemy.json';
+                    // switch(type) {
+                    //     case ENEMY_TYPE_001:
+                    //
+                    //         json = './assets/enemy.json';
+                    //         break;
+                    //     case ENEMY_TYPE_002:
+                    //         json = './assets/enemy2.json';
+                    //         break;
+                    //     case ENEMY_TYPE_003:
+                    //         json = './assets/enemy3.json';
+                    //         break;
+                    // }
+                    // const loader = new PIXI.Loader();
+                    // loader.add('sprite', json).once('complete', ()=>{
+                    //     // スプライト
+                    //     const textures = [];
+                    //     textures.push(PIXI.Texture.from('enemy-left-0'));
+                    //     textures.push(PIXI.Texture.from('enemy-left-1'));
+                    //     textures.push(PIXI.Texture.from('enemy-left-2'));
+                    //     textures.push(PIXI.Texture.from('enemy-left-3'));
+                    //     textures.push(PIXI.Texture.from('enemy-right-0'));
+                    //     textures.push(PIXI.Texture.from('enemy-right-1'));
+                    //     textures.push(PIXI.Texture.from('enemy-right-2'));
+                    //     textures.push(PIXI.Texture.from('enemy-right-3'));
+                    //     textures.push(PIXI.Texture.from('enemy-death'));
+                    //     const sprite = new PIXI.AnimatedSprite(textures);
+                    //     sprite.position.set(0, 0);
+                    //     sprite.width = CELL_SIZE;
+                    //     sprite.height = CELL_SIZE ;
+                    //     sprite.gotoAndStop(0);
+                    //     this.mapContainer.addChild(sprite);
+                    //     //
+                    //     this.enemiesSprite.push({
+                    //         eid: eid,
+                    //         sprite: sprite,
+                    //         currentPositionY: null,
+                    //         currentPositionX: null,
+                    //     });
+                    //     resolve();
+                    // });
+                    // loader.load();
                 });
             },
 

@@ -33,8 +33,8 @@ export const CELL_TYPE_ITEM_BOMB_POSSESSIONS = 21; // アイテム（爆弾所�
 export const CELL_TYPE_ITEM_MOVE_SPEED = 22; // アイテム（移動速度）
 // プレーヤー情報
 // export const PLAYER_INITIAL_MOVE_SPEED = 0.8;
-// export const PLAYER_INITIAL_EXPLOSION_POWER = 10;
-// export const PLAYER_INITIAL_BOMB_POSSESSIONS = 10;
+// export const PLAYER_INITIAL_EXPLOSION_POWER = 100;
+// export const PLAYER_INITIAL_BOMB_POSSESSIONS = 100;
 export const PLAYER_INITIAL_MOVE_SPEED = 0.2;
 export const PLAYER_INITIAL_EXPLOSION_POWER = 1;
 export const PLAYER_INITIAL_BOMB_POSSESSIONS = 1;

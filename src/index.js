@@ -22,6 +22,15 @@ import {
     SET_POINT,
     SET_BOMBS_MAP,
 } from './mutation-types';
+import * as PIXI from 'pixi.js';
+import {
+    CHARACTER_TYPE_000,
+    CHARACTER_TYPE_001,
+    CHARACTER_TYPE_002,
+    ENEMY_TYPE_001,
+    ENEMY_TYPE_002,
+    ENEMY_TYPE_003,
+} from "./const";
 // import {
 //     GAME_MAP_COL,
 //     GAME_MAP_ROW,
@@ -30,7 +39,199 @@ import {
 Vue.config.productionTip = false;
 Vue.use(Vuex);
 
-(()=> {
+window.textures = [];
+
+// テクスチャ 読み込み
+const loadTexture = (type)=> {
+    return new Promise((resolve)=> {
+        const loader = new PIXI.Loader();
+        switch(type) {
+            case 'field':
+                loader.add('field', './assets/field.json').once('complete', ()=>{
+                    const textures = [];
+                    let i, max;
+                    for (i = 0, max = 22; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`cell-type-${i}`));
+                    }
+                    textures.push(PIXI.Texture.from(`cell-type-4-1`)); // 爆弾アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-4-2`)); // 爆弾アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-4-3`)); // 爆弾アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-3-1`)); // ブロック爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-3-2`)); // ブロック爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-3-3`)); // ブロック爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-5-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-5-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-6-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-6-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-7-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-7-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-8-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-8-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-9-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-9-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-10-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-10-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-11-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-11-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-12-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-12-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-13-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-13-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-14-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-14-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-15-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-15-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-16-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-16-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-17-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-17-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-18-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-18-2`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-19-1`)); // 爆破アニメーション
+                    textures.push(PIXI.Texture.from(`cell-type-19-2`)); // 爆破アニメーション
+                    window.textures.push({
+                        type: 'field',
+                        textures: textures,
+                    });
+                    resolve();
+                });
+                break;
+            case CHARACTER_TYPE_000:
+                loader.add('sprite2', './assets/player000.json').once('complete', ()=>{
+                    const textures = [];
+                    let i, max;
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player000-down-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player000-up-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player000-left-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player000-right-${i}`));
+                    }
+                    textures.push(PIXI.Texture.from(`player000-death`));
+                    window.textures.push({
+                        type: type,
+                        textures: textures,
+                    });
+                    resolve();
+                });
+                break;
+            case CHARACTER_TYPE_001:
+                loader.add('sprite3', './assets/player001.json').once('complete', ()=>{
+                    const textures = [];
+                    let i, max;
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player001-down-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player001-up-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player001-left-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player001-right-${i}`));
+                    }
+                    textures.push(PIXI.Texture.from(`player001-death`));
+                    window.textures.push({
+                        type: type,
+                        textures: textures,
+                    });
+                    resolve();
+                });
+                break;
+            case CHARACTER_TYPE_002:
+                loader.add('sprite4', './assets/player002.json').once('complete', ()=>{
+                    const textures = [];
+                    let i, max;
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player002-down-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player002-up-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player002-left-${i}`));
+                    }
+                    for (i = 0, max = 3; i <= max; i = i + 1) {
+                        textures.push(PIXI.Texture.from(`player002-right-${i}`));
+                    }
+                    textures.push(PIXI.Texture.from(`player002-death`));
+                    window.textures.push({
+                        type: type,
+                        textures: textures,
+                    });
+                    resolve();
+                });
+                break;
+            case ENEMY_TYPE_001:
+                loader.add('sprite5', './assets/enemy.json').once('complete', ()=>{
+                    const textures = [];
+                    textures.push(PIXI.Texture.from('enemy-left-0'));
+                    textures.push(PIXI.Texture.from('enemy-left-1'));
+                    textures.push(PIXI.Texture.from('enemy-left-2'));
+                    textures.push(PIXI.Texture.from('enemy-left-3'));
+                    textures.push(PIXI.Texture.from('enemy-right-0'));
+                    textures.push(PIXI.Texture.from('enemy-right-1'));
+                    textures.push(PIXI.Texture.from('enemy-right-2'));
+                    textures.push(PIXI.Texture.from('enemy-right-3'));
+                    textures.push(PIXI.Texture.from('enemy-death'));
+                    window.textures.push({
+                        type: type,
+                        textures: textures,
+                    });
+                    resolve();
+                });
+                break;
+            case ENEMY_TYPE_002:
+                loader.add('sprite6', './assets/enemy2.json').once('complete', ()=>{
+                    const textures = [];
+                    textures.push(PIXI.Texture.from('enemy2-left-0'));
+                    textures.push(PIXI.Texture.from('enemy2-left-1'));
+                    textures.push(PIXI.Texture.from('enemy2-left-2'));
+                    textures.push(PIXI.Texture.from('enemy2-left-3'));
+                    textures.push(PIXI.Texture.from('enemy2-right-0'));
+                    textures.push(PIXI.Texture.from('enemy2-right-1'));
+                    textures.push(PIXI.Texture.from('enemy2-right-2'));
+                    textures.push(PIXI.Texture.from('enemy2-right-3'));
+                    textures.push(PIXI.Texture.from('enemy2-death'));
+                    window.textures.push({
+                        type: type,
+                        textures: textures,
+                    });
+                    resolve();
+                });
+                break;
+            case ENEMY_TYPE_003:
+                loader.add('sprite7', './assets/enemy3.json').once('complete', ()=>{
+                    const textures = [];
+                    textures.push(PIXI.Texture.from('enemy3-left-0'));
+                    textures.push(PIXI.Texture.from('enemy3-left-1'));
+                    textures.push(PIXI.Texture.from('enemy3-left-2'));
+                    textures.push(PIXI.Texture.from('enemy3-left-3'));
+                    textures.push(PIXI.Texture.from('enemy3-right-0'));
+                    textures.push(PIXI.Texture.from('enemy3-right-1'));
+                    textures.push(PIXI.Texture.from('enemy3-right-2'));
+                    textures.push(PIXI.Texture.from('enemy3-right-3'));
+                    textures.push(PIXI.Texture.from('enemy3-death'));
+                    window.textures.push({
+                        type: type,
+                        textures: textures,
+                    });
+                    resolve();
+                });
+                break;
+        }
+        loader.load();
+    });
+}
+
+// コンテンツ開始
+const startContent = ()=> {
 
     // FPS表示
     // const stats = (()=> {
@@ -280,4 +481,27 @@ Vue.use(Vuex);
         template: '<app/>',
     });
 
+}
+
+(()=> {
+    const arr = [
+        'field',
+        CHARACTER_TYPE_000,
+        CHARACTER_TYPE_001,
+        CHARACTER_TYPE_002,
+        ENEMY_TYPE_001,
+        ENEMY_TYPE_002,
+        ENEMY_TYPE_003
+    ];
+    let loaded = 0;
+    let i, max;
+    for (i = 0, max = arr.length; i < max; i = i + 1) {
+        loadTexture(arr[i]).then(() => {
+            if (arr.length - 1 <= loaded) {
+                startContent();
+            } else {
+                loaded += 1;
+            }
+        });
+    }
 })()
