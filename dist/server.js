@@ -613,7 +613,7 @@ function addPoint(uid, point, y, x) {
         value: point,
     });
     io.emit('points', points);
-    if (10 <= points.length) points = [];
+    if (100 <= points.length) points = [];
 }
 
 // 敵移動
