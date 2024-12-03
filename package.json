@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "es6-promise": "^4.2.8",
-    "gsap": "^3.2.6",
+    "gsap": "^3.6.0",
     "http-server": "^0.12.3",
     "pixi.js": "^5.2.4",
     "reset-css": "^5.0.1",
